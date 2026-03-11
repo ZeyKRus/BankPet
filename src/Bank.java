@@ -97,42 +97,29 @@ public class Bank {
         history.get(time).add(Transaction.fromRequest(time,req,success));
     }
 
-    public List<Transaction> getHistory() {
-        LocalDateTime start = history.firstKey();
-        LocalDateTime finish = history.lastKey();
-        return getHistory(start, finish);
-    }
+    public List<Transaction> getHistory(HistoryFilter filter) {
+        if (history.isEmpty()) return new ArrayList<>();
+        if (filter == null) filter = HistoryFilter.builder().build();
 
-    public List<Transaction> getHistory(BankAccount acc) {
-        LocalDateTime start = history.firstKey();
-        LocalDateTime finish = history.lastKey();
-        return getHistory(start, finish, acc);
-    }
+        LocalDateTime start = filter.getFrom();
+        LocalDateTime finish = filter.getTo();
+        BankAccount acc = filter.getAcc();
+        OperationType type = filter.getType();
 
-    public List<Transaction> getHistory(LocalDateTime from, LocalDateTime to) {
-        BankAccount acc = null;
-        return getHistory(from, to, acc);
-    }
+        if (start != null && finish != null && start.isAfter(finish)) return new ArrayList<>();
 
-    public List<Transaction> getHistory(LocalDateTime from, LocalDateTime to, BankAccount acc) {
-        OperationType type = null;
-        return getHistory(from, to, acc, type);
-    }
+        if (start == null) start = history.firstKey();
+        if (finish == null) finish = history.lastKey();
 
-    public List<Transaction> getHistory(LocalDateTime from, LocalDateTime to, BankAccount acc, OperationType type) {
-        SortedMap<LocalDateTime, ArrayList<Transaction>> subMap = history.subMap(from, to);
-
-        List<Transaction> list = subMap.values().stream()
+        return history.subMap(start,finish).values().stream()
                 .flatMap(ArrayList::stream)
-                .filter(t ->  acc == null || t.accFrom() == acc || t.accTo() == acc)
+                .filter(t -> acc == null || t.accFrom() == acc || t.accTo() == acc)
                 .filter(t -> type == null || t.operationType() == type)
                 .toList();
-
-        return list;
     }
 
     public List<Transaction> getLast10(BankAccount acc) {
-        List<Transaction> list = getHistory(acc);
+        List<Transaction> list = getHistory(HistoryFilter.builder().acc(acc).build());
         list = list.reversed();
         list = list.subList(0,Math.min(10,list.size()));
         return list;

@@ -1,6 +1,8 @@
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Bank {
 
@@ -14,15 +16,10 @@ public class Bank {
     private final TreeMap<LocalDateTime, ArrayList<Transaction>> history = new TreeMap<>();
     private final PriorityQueue<TransactionRequest> transactionQueue = new PriorityQueue<>(TransactionRequest::compareTo);
     private final Map<OperationType, Consumer<TransactionRequest>> requestHandler = new HashMap<>();
-    private final Map<OperationType, Integer> statistic = new HashMap<>();
 
     public Bank(String name) {
         this.number = counter; //Автоматическое присвоение номера банка через счетчик
         counter++;
-
-        for (OperationType type : OperationType.values()) {
-            statistic.put(type,0);
-        }
 
         requestHandler.put(OperationType.DEPOSIT, this::deposit);
         requestHandler.put(OperationType.WITHDRAW, this::withdraw);
@@ -54,12 +51,42 @@ public class Bank {
         return Optional.ofNullable(accounts.get(accountNumber));
     }
 
-    //######################## Обработка истории и статистики #############################
+    //######################## Обработка статистики #############################
 
-    private void addToStatistic(OperationType type) {
-        int current = statistic.get(type);
-        statistic.put(type, current + 1);
+    private Stream<Transaction> successTransactions() {
+        return history.values().stream()
+                .flatMap(ArrayList::stream)
+                .filter(Transaction::success);
     }
+
+    private Map<OperationType, Long> getStatistic() {
+        return successTransactions()
+                .collect(Collectors.groupingBy(Transaction::operationType,Collectors.counting()));
+
+    }
+
+    private long getCountByType(OperationType type) {
+        return successTransactions()
+                .filter(t -> t.operationType() == type)
+                .count();
+    }
+
+    private double getSumByType(OperationType type) {
+        return successTransactions()
+                .filter(t -> t.operationType() == type)
+                .collect(Collectors.summingDouble(Transaction::amount));
+    }
+
+    private List<Transaction> getTopTransactions(OperationType type, int n) {
+        if (n <= 0) return List.of();
+        return successTransactions()
+                .filter(t -> t.operationType() == type)
+                .sorted(Comparator.comparingDouble(Transaction::amount).reversed())
+                .limit(n)
+                .collect(Collectors.toList());
+    }
+
+    //######################## Обработка истории #############################
 
     private void addToHistory(TransactionRequest req, boolean success) {
         LocalDateTime time = LocalDateTime.now();
@@ -68,7 +95,6 @@ public class Bank {
             history.put(time, new ArrayList<>());
         }
         history.get(time).add(Transaction.fromRequest(time,req,success));
-        if (success) addToStatistic(req.operationType());
     }
 
     public List<Transaction> getHistory() {

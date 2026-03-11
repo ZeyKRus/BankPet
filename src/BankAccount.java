@@ -19,7 +19,7 @@ public class BankAccount {
 
     //######################## Работа с историей операций #############################
 
-    public List<Transaction> getHistory() {
+    private List<Transaction> getHistory() {
         return bankOwner.getLast10(this);
     }
 
@@ -56,12 +56,12 @@ public class BankAccount {
 
     //######################## Действия со средствами #############################
 
-    public void deposit(double amount) {
+    void deposit(double amount) {
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
         balance += amount;
     }
 
-    public void withdraw(double amount) throws InsufficientFundsException {
+    void withdraw(double amount) throws InsufficientFundsException {
         if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
         if (balance < amount) throw new InsufficientFundsException("Сумма снятия средств должна быть не больше, чем сумма имеющихся средств. Недостаток: "+(amount - balance), amount - balance);
         balance -= amount;

@@ -46,10 +46,12 @@ public class Bank {
         return current;
     }
 
-    public BankAccount findAccount(int accountNumber) {
-        BankAccount acc = accounts.get(accountNumber);
-        if (acc == null) throw new IllegalArgumentException("Аккаунт с указанным номером не существует");
-        return acc;
+    public BankAccount getAccount(int accountNumber) {
+        return Optional.ofNullable(accounts.get(accountNumber)).orElseThrow(() -> new IllegalArgumentException("Счет не найден"));
+    }
+
+    public Optional<BankAccount> findAccount(int accountNumber) {
+        return Optional.ofNullable(accounts.get(accountNumber));
     }
 
     //######################## Обработка истории и статистики #############################
@@ -93,24 +95,14 @@ public class Bank {
 
     public List<Transaction> getHistory(LocalDateTime from, LocalDateTime to, BankAccount acc, OperationType type) {
         SortedMap<LocalDateTime, ArrayList<Transaction>> subMap = history.subMap(from, to);
-        List<Transaction> list = new ArrayList<>();
-        subMap.forEach((k,s) -> list.addAll(s));
 
-        List<Transaction> filteredList = list;
+        List<Transaction> list = subMap.values().stream()
+                .flatMap(ArrayList::stream)
+                .filter(t ->  acc == null || t.accFrom() == acc || t.accTo() == acc)
+                .filter(t -> type == null || t.operationType() == type)
+                .toList();
 
-        if (acc != null) {
-            filteredList = filteredList.stream()
-                    .filter(t -> t.accFrom() == acc || t.accTo() == acc)
-                    .toList();
-        }
-
-        if (type != null) {
-            filteredList = filteredList.stream()
-                    .filter(t -> t.operationType() == type)
-                    .toList();
-        }
-
-        return filteredList;
+        return list;
     }
 
     public List<Transaction> getLast10(BankAccount acc) {

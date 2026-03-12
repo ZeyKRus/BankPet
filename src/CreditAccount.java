@@ -1,5 +1,4 @@
-public class CreditAccount extends Account {
-    private final double DEFAULT_CREDIT_LIMIT = 1000;
+public class CreditAccount extends Account implements CreditAllowed {
     private double creditLimit;
 
     public CreditAccount(Bank bankOwner, int number, String owner, double initialBalance) {
@@ -9,34 +8,8 @@ public class CreditAccount extends Account {
 
     //######################## Создание заявки на транзакцию #############################
 
-    @Override
-    public void withdrawRequest(double amount) throws InsufficientFundsException {
-        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
-        if (!canWithdraw(amount)) throw new InsufficientFundsException("Сумма снятия средств должна быть не больше, чем сумма имеющихся средств и доступного кредита. Недостаток: " + (amount - (balance + creditLimit)), amount - (balance + creditLimit));
-
-        TransactionRequest req = new TransactionRequest(this, null, OperationType.WITHDRAW, amount);
-        sendRequest(req);
-    }
-
-    @Override
-    public void transferRequest(Account accTo, double amount) throws InsufficientFundsException {
-        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
-        if (!canWithdraw(amount)) throw new InsufficientFundsException("Сумма снятия средств должна быть не больше, чем сумма имеющихся средств и доступного кредита. Недостаток: " + (amount - (balance + creditLimit)), amount - (balance + creditLimit));
-        if (this == accTo) throw new IllegalArgumentException("Нельзя переводить самому себе");
-        if (accTo == null) throw new IllegalArgumentException("Счёт не найден");
-
-        TransactionRequest req = new TransactionRequest(this, accTo, OperationType.TRANSFER, amount);
-        sendRequest(req);
-    }
 
     //######################## Действия со средствами #############################
-
-    @Override
-    void withdraw(double amount) throws InsufficientFundsException {
-        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
-        if (!canWithdraw(amount)) throw new InsufficientFundsException("Сумма снятия средств должна быть не больше, чем сумма имеющихся средств и доступного кредита. Недостаток: " + (amount - (balance + creditLimit)), amount - (balance + creditLimit));
-        balance -= amount;
-    }
 
     @Override
     public boolean canWithdraw(double amount) {
@@ -45,14 +18,24 @@ public class CreditAccount extends Account {
         return can;
     }
 
+    @Override
+    public double notEnough(double amount) {
+        if (amount < (balance + creditLimit)) return 0;
+        else return amount - balance - creditLimit;
+    }
+
+    @Override
+    public void applyCredit() {
+        if (balance < 0) balance += balance * DEFAULT_CREDIT_PERCENT;
+    }
+
     //######################## Геттеры и сеттеры #############################
 
-    void setCreditLimit(double creditLimit) {
+    public void setCreditLimit(double creditLimit) {
         this.creditLimit = creditLimit;
     }
 
     public double getCreditLimit() {
         return creditLimit;
     }
-
 }

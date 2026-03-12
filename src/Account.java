@@ -34,9 +34,23 @@ public abstract class Account {
         sendRequest(req);
     }
 
-    public abstract void transferRequest(Account accTo, double amount) throws InsufficientFundsException;
+    public void transferRequest(Account accTo, double amount) throws InsufficientFundsException {
+        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
+        if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
+        if (this == accTo) throw new IllegalArgumentException("Нельзя переводить самому себе");
+        if (accTo == null) throw new IllegalArgumentException("Счёт не найден");
 
-    public abstract void withdrawRequest(double amount) throws InsufficientFundsException;
+        TransactionRequest req = new TransactionRequest(this, accTo, OperationType.TRANSFER, amount);
+        sendRequest(req);
+    }
+
+    public void withdrawRequest(double amount) throws InsufficientFundsException {
+        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
+        if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
+
+        TransactionRequest req = new TransactionRequest(this, null, OperationType.WITHDRAW, amount);
+        sendRequest(req);
+    }
 
     //######################## Действия со средствами #############################
 
@@ -45,9 +59,15 @@ public abstract class Account {
         balance += amount;
     }
 
-    abstract void withdraw(double amount) throws InsufficientFundsException;
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
+        if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
+        balance -= amount;
+    }
 
     public abstract boolean canWithdraw(double amount);
+
+    public abstract double notEnough(double amount);
 
     //######################## Геттеры и сеттеры #############################
 

@@ -39,6 +39,18 @@ public class Bank {
         this.name = name;
     }
 
+    private void interestAll() {
+        accounts.values().stream()
+                .filter(acc -> acc instanceof InterestBearing)
+                .forEach(acc -> ((InterestBearing) acc).applyInterest());
+    }
+
+    private void creditAll() {
+        accounts.values().stream()
+                .filter(acc -> acc instanceof CreditAllowed)
+                .forEach(acc -> ((CreditAllowed) acc).applyCredit());
+    }
+
     private static int generateBankNumber() {
         int current = counter;
         counter++;

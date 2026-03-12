@@ -1,6 +1,18 @@
+package main.java.com.github.zeykrus.bankpet;
+
+import main.java.com.github.zeykrus.bankpet.account.Account;
+import main.java.com.github.zeykrus.bankpet.account.CreditAccount;
+import main.java.com.github.zeykrus.bankpet.account.SavingsAccount;
+import main.java.com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
+import main.java.com.github.zeykrus.bankpet.model.HistoryFilter;
+import main.java.com.github.zeykrus.bankpet.model.Transaction;
+import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
+import main.java.com.github.zeykrus.bankpet.model.BankCountry;
+import main.java.com.github.zeykrus.bankpet.model.BankCurrency;
+import main.java.com.github.zeykrus.bankpet.model.OperationType;
+
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Currency;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,16 +51,10 @@ public class Bank {
         this.name = name;
     }
 
-    private void interestAll() {
+    private void executeAll() {
         accounts.values().stream()
-                .filter(acc -> acc instanceof InterestBearing)
-                .forEach(acc -> ((InterestBearing) acc).applyInterest());
-    }
-
-    private void creditAll() {
-        accounts.values().stream()
-                .filter(acc -> acc instanceof CreditAllowed)
-                .forEach(acc -> ((CreditAllowed) acc).applyCredit());
+                .filter(acc -> acc instanceof PeriodicOperation)
+                .forEach(acc -> ((PeriodicOperation) acc).execute());
     }
 
     private static int generateBankNumber() {

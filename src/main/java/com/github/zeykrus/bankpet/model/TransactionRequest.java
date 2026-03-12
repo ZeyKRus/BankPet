@@ -1,3 +1,6 @@
+package main.java.com.github.zeykrus.bankpet.model;
+
+import main.java.com.github.zeykrus.bankpet.account.Account;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

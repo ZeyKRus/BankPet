@@ -1,3 +1,11 @@
+package main.java.com.github.zeykrus.bankpet.account;
+
+import main.java.com.github.zeykrus.bankpet.Bank;
+import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import main.java.com.github.zeykrus.bankpet.model.Transaction;
+import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
+import main.java.com.github.zeykrus.bankpet.model.OperationType;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +62,7 @@ public abstract class Account {
 
     //######################## Действия со средствами #############################
 
-    void deposit(double amount) {
+    public void deposit(double amount) {
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
         balance += amount;
     }

@@ -1,3 +1,5 @@
+package main.java.com.github.zeykrus.bankpet.exception;
+
 public class InsufficientFundsException extends Exception {
     private final double deficit;
 

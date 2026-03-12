@@ -1,3 +1,7 @@
+package main.java.com.github.zeykrus.bankpet.account;
+
+import main.java.com.github.zeykrus.bankpet.Bank;
+
 public class SavingsAccount extends Account {
 
     public SavingsAccount(Bank bankOwner, int number, String owner, double initialBalance) {

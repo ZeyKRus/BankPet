@@ -1,9 +1,14 @@
+package main.java.com.github.zeykrus.bankpet.account;
+
+import main.java.com.github.zeykrus.bankpet.Bank;
+import main.java.com.github.zeykrus.bankpet.interfaces.CreditAllowed;
+
 public class CreditAccount extends Account implements CreditAllowed {
     private double creditLimit;
 
     public CreditAccount(Bank bankOwner, int number, String owner, double initialBalance) {
         super(bankOwner, number, owner, initialBalance);
-        creditLimit = DEFAULT_CREDIT_LIMIT; //Базовый кредитный лимит
+        creditLimit = CreditAllowed.DEFAULT_CREDIT_LIMIT; //Базовый кредитный лимит
     }
 
     //######################## Создание заявки на транзакцию #############################
@@ -25,8 +30,8 @@ public class CreditAccount extends Account implements CreditAllowed {
     }
 
     @Override
-    public void applyCredit() {
-        if (balance < 0) balance += balance * DEFAULT_CREDIT_PERCENT;
+    public void execute() {
+        if (balance < 0) balance += balance * CreditAllowed.DEFAULT_CREDIT_PERCENT;
     }
 
     //######################## Геттеры и сеттеры #############################

@@ -12,7 +12,7 @@ public class Bank {
 
     private final String name;
     private final int number;
-    private final Map<Integer, BankAccount> accounts = new HashMap<>();
+    private final Map<Integer, Account> accounts = new HashMap<>();
     private final TreeMap<LocalDateTime, ArrayList<Transaction>> history = new TreeMap<>();
     private final PriorityQueue<TransactionRequest> transactionQueue = new PriorityQueue<>(TransactionRequest::compareTo);
     private final Map<OperationType, Consumer<TransactionRequest>> requestHandler = new HashMap<>();
@@ -36,18 +36,25 @@ public class Bank {
 
     //######################## Действия с аккаунтами #############################
 
-    public BankAccount createAccount(String owner, double initialBalance) {
-        BankAccount current = new BankAccount(this, accountNumber, owner, initialBalance);
+    public SavingsAccount createSavingAccount(String owner, double initialBalance) {
+        SavingsAccount current = new SavingsAccount(this, accountNumber, owner, initialBalance);
         accounts.put(current.getNumber(),current);
         accountNumber++;
         return current;
     }
 
-    public BankAccount getAccount(int accountNumber) {
+    public CreditAccount createCreditAccount(String owner, double initialBalance) {
+        CreditAccount current = new CreditAccount(this, accountNumber, owner, initialBalance);
+        accounts.put(current.getNumber(),current);
+        accountNumber++;
+        return current;
+    }
+
+    public Account getAccount(int accountNumber) {
         return Optional.ofNullable(accounts.get(accountNumber)).orElseThrow(() -> new IllegalArgumentException("Счет не найден"));
     }
 
-    public Optional<BankAccount> findAccount(int accountNumber) {
+    public Optional<Account> findAccount(int accountNumber) {
         return Optional.ofNullable(accounts.get(accountNumber));
     }
 
@@ -103,7 +110,7 @@ public class Bank {
 
         LocalDateTime start = filter.getFrom();
         LocalDateTime finish = filter.getTo();
-        BankAccount acc = filter.getAcc();
+        Account acc = filter.getAcc();
         OperationType type = filter.getType();
 
         if (start != null && finish != null && start.isAfter(finish)) return new ArrayList<>();
@@ -118,7 +125,7 @@ public class Bank {
                 .toList();
     }
 
-    public List<Transaction> getLast10(BankAccount acc) {
+    public List<Transaction> getLast10(Account acc) {
         List<Transaction> list = getHistory(HistoryFilter.builder().acc(acc).build());
         list = list.reversed();
         list = list.subList(0,Math.min(10,list.size()));
@@ -127,7 +134,7 @@ public class Bank {
 
     //######################## Обработка запросов #############################
 
-    public List<Transaction> last10Request(BankAccount acc) {
+    public List<Transaction> last10Request(Account acc) {
         return getLast10(acc);
     }
 
@@ -145,15 +152,15 @@ public class Bank {
     //######################## Действия со средствами на аккаунтах #############################
 
     public void transfer(TransactionRequest req) {
-        BankAccount accFrom = req.accFrom();
-        BankAccount accTo = req.accTo();
+        Account accFrom = req.accFrom();
+        Account accTo = req.accTo();
         double amount = req.amount();
 
         try {
             if (accFrom == null) throw new IllegalArgumentException("Счета списания не существует");
             if (accTo == null) throw new IllegalArgumentException("Счета пополнения не существует");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма перевода");
-            if (accFrom.getBalance() < amount) throw new IllegalArgumentException("На счете недостаточно средств для перевода");
+            if (!accFrom.canWithdraw(amount)) throw new IllegalArgumentException("На счете недостаточно средств для перевода");
 
             accFrom.withdraw(amount);
             accTo.deposit(amount);
@@ -166,12 +173,13 @@ public class Bank {
     }
 
     public void deposit(TransactionRequest req) {
-        BankAccount acc = req.accFrom();
+        Account acc = req.accFrom();
         double amount = req.amount();
 
         try {
             if (acc == null) throw new IllegalArgumentException("Счета не существует");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма пополнения");
+
             acc.deposit(amount);
         } catch (Exception e) {
             addToHistory(req,false);
@@ -182,12 +190,14 @@ public class Bank {
     }
 
     public void withdraw(TransactionRequest req) {
-        BankAccount acc = req.accFrom();
+        Account acc = req.accFrom();
         double amount = req.amount();
 
         try {
             if (acc == null) throw new IllegalArgumentException("Счета не существует");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма списания");
+            if (!acc.canWithdraw(amount)) throw new IllegalArgumentException("На счете недостаточно средств для перевода");
+
             acc.withdraw(amount);
         } catch (Exception e) {
             addToHistory(req,false);

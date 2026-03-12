@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 public class HistoryFilter {
     private final LocalDateTime from;
     private final LocalDateTime to;
-    private final BankAccount acc;
+    private final Account acc;
     private final OperationType type;
 
     private HistoryFilter(Builder builder) {
@@ -16,7 +16,7 @@ public class HistoryFilter {
     public static class Builder {
         private LocalDateTime from;
         private LocalDateTime to;
-        private BankAccount acc;
+        private Account acc;
         private OperationType type;
 
         public Builder() {
@@ -36,7 +36,7 @@ public class HistoryFilter {
             return this;
         }
 
-        public Builder acc(BankAccount acc) {
+        public Builder acc(Account acc) {
             this.acc = acc;
             return this;
         }
@@ -63,7 +63,7 @@ public class HistoryFilter {
         return to;
     }
 
-    public BankAccount getAcc() {
+    public Account getAcc() {
         return acc;
     }
 

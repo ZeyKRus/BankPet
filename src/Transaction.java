@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public record Transaction(
         LocalDateTime dateTime,
-        BankAccount accFrom,
-        BankAccount accTo,
+        Account accFrom,
+        Account accTo,
         OperationType operationType,
         double amount,
         boolean success

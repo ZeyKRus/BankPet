@@ -1,8 +1,8 @@
 import org.jetbrains.annotations.NotNull;
 
 public record TransactionRequest(
-        BankAccount accFrom,
-        BankAccount accTo,
+        Account accFrom,
+        Account accTo,
         OperationType operationType,
         double amount
 ) implements Comparable<TransactionRequest> {

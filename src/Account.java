@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Account {
     protected final Bank bankOwner;
@@ -44,7 +45,6 @@ public abstract class Account {
         balance += amount;
     }
 
-
     abstract void withdraw(double amount) throws InsufficientFundsException;
 
     public abstract boolean canWithdraw(double amount);
@@ -65,5 +65,18 @@ public abstract class Account {
 
     public Bank getBankOwner() {
         return bankOwner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return number == account.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(number);
     }
 }

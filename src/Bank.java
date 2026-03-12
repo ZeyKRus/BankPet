@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Currency;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -7,6 +8,7 @@ import java.util.stream.Stream;
 public class Bank {
 
     private static int counter;
+    private final static String BANK_CODE_PREFIX = "B-";
 
     private int accountNumber = 0;
 
@@ -17,9 +19,12 @@ public class Bank {
     private final PriorityQueue<TransactionRequest> transactionQueue = new PriorityQueue<>(TransactionRequest::compareTo);
     private final Map<OperationType, Consumer<TransactionRequest>> requestHandler = new HashMap<>();
 
+    static {
+        System.out.println("Banking system initialized");
+    }
+
     public Bank(String name) {
-        this.number = counter; //Автоматическое присвоение номера банка через счетчик
-        counter++;
+        this.number = generateBankNumber();
 
         requestHandler.put(OperationType.DEPOSIT, this::deposit);
         requestHandler.put(OperationType.WITHDRAW, this::withdraw);
@@ -32,6 +37,57 @@ public class Bank {
         });
 
         this.name = name;
+    }
+
+    private static int generateBankNumber() {
+        int current = counter;
+        counter++;
+        return current;
+    }
+
+    public static class BankInfo {
+        private String name;
+        private HashMap<BankCurrency, Boolean> currency;
+        private BankCountry country;
+
+        public BankInfo(String name, BankCountry country) {
+            this.name = name;
+            this.country = country;
+            this.currency = new HashMap<>();
+
+            for (BankCurrency curr : BankCurrency.values()) {
+                currency.put(curr, false);
+            }
+        }
+
+        public void setCurrencyAllowing(BankCurrency curr, Boolean allow) {
+            if (curr != null) this.currency.put(curr, allow);
+        }
+
+        public boolean isAllowed(BankCurrency curr) {
+            if (curr == null) return false;
+            return currency.get(curr);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public HashMap<BankCurrency, Boolean> getCurrency() {
+            return currency;
+        }
+
+        public BankCountry getCountry() {
+            return country;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setCountry(BankCountry country) {
+            this.country = country;
+        }
     }
 
     //######################## Действия с аккаунтами #############################
@@ -217,4 +273,8 @@ public class Bank {
         return number;
     }
 
+    @Override
+    public String toString() {
+        return "Bank number: "+BANK_CODE_PREFIX+number;
+    }
 }

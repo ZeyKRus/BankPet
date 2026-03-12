@@ -1,6 +1,7 @@
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public record Transaction(
         LocalDateTime dateTime,
@@ -28,5 +29,18 @@ public record Transaction(
 
     public int compareByAmount(@NotNull Transaction o) {
         return Double.compare(o.amount(),this.amount());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Double.compare(amount, that.amount) == 0 && success == that.success && Objects.equals(accTo, that.accTo) && Objects.equals(accFrom, that.accFrom) && Objects.equals(dateTime, that.dateTime) && operationType == that.operationType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateTime, accFrom.getNumber(), accTo.getNumber(), operationType, amount, success);
     }
 }

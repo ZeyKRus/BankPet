@@ -15,7 +15,6 @@ public abstract class Account {
     protected final int number;
     protected final String owner;
     protected double balance;
-    protected List<Transaction> history;
 
 
     public Account(Bank bankOwner, int number, String owner, double initialBalance) {
@@ -23,18 +22,12 @@ public abstract class Account {
         this.owner = owner;
         this.bankOwner = bankOwner;
         this.balance = initialBalance;
-        this.history = new ArrayList<>();
     }
 
     //######################## Работа с историей операций #############################
 
-    public void historyRequest() {
-        TransactionRequest req = new TransactionRequest(this, null, OperationType.HISTORY_CHECK, 0);
-        sendRequest(req);
-    }
-
-    public void applyHistory(List<Transaction> history) {
-        this.history = history;
+    public List<Transaction> getHistory() {
+        return bankOwner.getHistory(this);
     }
 
     //######################## Создание заявки на транзакцию #############################

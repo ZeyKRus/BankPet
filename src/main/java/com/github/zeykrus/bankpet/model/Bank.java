@@ -54,6 +54,10 @@ public class Bank {
         return accountManager.getAllAccounts();
     }
 
+    public List<Transaction> getHistory(Account acc) {
+        return core.getHistory(acc);
+    }
+
     @Override
     public String toString() {
         return "Bank number: "+BANK_CODE_PREFIX+number;

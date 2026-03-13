@@ -1,6 +1,8 @@
 package main.java.com.github.zeykrus.bankpet.services;
 
 import main.java.com.github.zeykrus.bankpet.account.Account;
+import main.java.com.github.zeykrus.bankpet.exception.IllegalAccountException;
+import main.java.com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
 import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import main.java.com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
 import main.java.com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
@@ -23,7 +25,6 @@ public class ActionHandler {
         requestHandler.put(OperationType.DEPOSIT, this::deposit);
         requestHandler.put(OperationType.WITHDRAW, this::withdraw);
         requestHandler.put(OperationType.TRANSFER, this::transfer);
-        requestHandler.put(OperationType.HISTORY_CHECK, this::historyCheck);
     }
 
     public void transfer(TransactionRequest req) throws InsufficientFundsException {
@@ -81,24 +82,13 @@ public class ActionHandler {
         history.addToHistory(req,true);
     }
 
-    public void historyCheck(TransactionRequest req) {
-        List<Transaction> current = history.getHistory(HistoryFilter.builder().acc(req.accFrom()).build());
-        req.accFrom().applyHistory(current);
+    public List<Transaction> getHistory(Account acc) {
+        return history.getHistory(HistoryFilter.builder().acc(acc).build());
     }
 
 
-
-    public void handle(TransactionRequest req) {
-        try {
-            requestHandler.get(req.operationType()).accept(req);
-        } catch (InsufficientFundsException e) {
-            //TODO добавить обработку ошибки нехватки средств
-        } catch (IllegalArgumentException e) {
-            //TODO добавить обработку ошибки неправильного аргумента
-        } catch (IllegalStateException e) {
-            //TODO добавить обработку ошибки состояния объекта
-        } catch (Exception e) {
-            //TODO добавить обработку ошибки, которая не входит в перечень вышестоящих
-        }
+    public void handle(TransactionRequest req) throws Exception {
+        if (req == null) throw new IllegalTransactionRequestException("Некорректный запрос на транзакцию");
+        requestHandler.get(req.operationType()).accept(req);
     }
 }

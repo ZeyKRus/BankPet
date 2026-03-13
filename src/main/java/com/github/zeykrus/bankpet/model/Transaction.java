@@ -44,6 +44,6 @@ public record Transaction(
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateTime, accFrom.getNumber(), accTo.getNumber(), operationType, amount, success);
+        return Objects.hash(dateTime, accFrom, accTo, operationType, amount, success);
     }
 }

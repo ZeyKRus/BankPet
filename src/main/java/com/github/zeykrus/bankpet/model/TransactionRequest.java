@@ -27,6 +27,6 @@ public record TransactionRequest(
 
     @Override
     public int hashCode() {
-        return Objects.hash(accFrom.getNumber(), accTo.getNumber(), operationType, amount);
+        return Objects.hash(accFrom, accTo, operationType, amount);
     }
 };

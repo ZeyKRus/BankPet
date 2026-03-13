@@ -1,7 +1,9 @@
 package main.java.com.github.zeykrus.bankpet.services;
 
 import main.java.com.github.zeykrus.bankpet.account.Account;
+import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import main.java.com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
+import main.java.com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
 import main.java.com.github.zeykrus.bankpet.model.HistoryFilter;
 import main.java.com.github.zeykrus.bankpet.model.OperationType;
 import main.java.com.github.zeykrus.bankpet.model.Transaction;
@@ -14,7 +16,7 @@ import java.util.function.Consumer;
 
 public class ActionHandler {
 
-    private final Map<OperationType, Consumer<TransactionRequest>> requestHandler = new HashMap<>();
+    private final Map<OperationType, ThrowingConsumer<TransactionRequest>> requestHandler = new HashMap<>();
     private final HistoryManager history = new HistoryManager();
 
     public ActionHandler() {
@@ -24,7 +26,7 @@ public class ActionHandler {
         requestHandler.put(OperationType.HISTORY_CHECK, this::historyCheck);
     }
 
-    public void transfer(TransactionRequest req) {
+    public void transfer(TransactionRequest req) throws InsufficientFundsException {
         Account accFrom = req.accFrom();
         Account accTo = req.accTo();
         double amount = req.amount();
@@ -33,12 +35,13 @@ public class ActionHandler {
             if (accFrom == null) throw new IllegalArgumentException("Счета списания не существует");
             if (accTo == null) throw new IllegalArgumentException("Счета пополнения не существует");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма перевода");
-            if (!accFrom.canWithdraw(amount)) throw new IllegalArgumentException("На счете недостаточно средств для перевода");
+            if (!accFrom.canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств для перевода",accFrom.notEnough(amount));
 
             accFrom.withdraw(amount);
             accTo.deposit(amount);
         } catch (Exception e) {
             history.addToHistory(req,false);
+            throw e;
         }
 
         history.addToHistory(req,true);
@@ -55,23 +58,24 @@ public class ActionHandler {
             acc.deposit(amount);
         } catch (Exception e) {
             history.addToHistory(req,false);
+            throw e;
         }
 
         history.addToHistory(req,true);
     }
 
-    public void withdraw(TransactionRequest req) {
+    public void withdraw(TransactionRequest req) throws InsufficientFundsException {
         Account acc = req.accFrom();
         double amount = req.amount();
 
         try {
             if (acc == null) throw new IllegalArgumentException("Счета не существует");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма списания");
-            if (!acc.canWithdraw(amount)) throw new IllegalArgumentException("На счете недостаточно средств для перевода");
 
             acc.withdraw(amount);
         } catch (Exception e) {
             history.addToHistory(req,false);
+            throw e;
         }
 
         history.addToHistory(req,true);
@@ -85,6 +89,16 @@ public class ActionHandler {
 
 
     public void handle(TransactionRequest req) {
-        requestHandler.get(req.operationType()).accept(req);
+        try {
+            requestHandler.get(req.operationType()).accept(req);
+        } catch (InsufficientFundsException e) {
+            //TODO добавить обработку ошибки нехватки средств
+        } catch (IllegalArgumentException e) {
+            //TODO добавить обработку ошибки неправильного аргумента
+        } catch (IllegalStateException e) {
+            //TODO добавить обработку ошибки состояния объекта
+        } catch (Exception e) {
+            //TODO добавить обработку ошибки, которая не входит в перечень вышестоящих
+        }
     }
 }

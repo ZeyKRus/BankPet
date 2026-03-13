@@ -21,18 +21,18 @@ BankPet — это консольное приложение, моделирую
 -   **Приоритетная обработка:** заявки на перевод обрабатываются в порядке убывания суммы (`PriorityQueue`).
 -   **История операций:** каждая операция сохраняется в историю с временной меткой (`TreeMap`).
 -   **Статистика:** подсчёт количества и общей суммы операций по типам.
--   **Гибкая фильтрация:** поиск операций по диапазону дат, счету и типу с помощью `HistoryFilter` (паттерн Builder).
+-   **Гибкая фильтрация:** поиск операций по диапазону дат, счету и типу с помощью `main.java.com.github.zeykrus.bankpet.model.HistoryFilter` (паттерн Builder).
 
 ## Архитектура
 
 Проект состоит из нескольких ключевых классов:
 
--   `Bank` — центральный класс, управляющий счетами, очередью запросов и историей.
--   `SavingsAccount` — представляет банковский счёт, хранит баланс и владельца.
--   `Transaction` — неизменяемый `record` с данными о совершённой операции.
--   `TransactionRequest` — `record`, описывающий запрос на операцию.
--   `HistoryFilter` — `класс` с паттерном Builder для фильтрации истории.
--   `InsufficientFundsException` — собственное checked исключение для бизнес-ситуаций.
+-   `main.java.com.github.zeykrus.bankpet.model.Bank` — центральный класс, управляющий счетами, очередью запросов и историей.
+-   `main.java.com.github.zeykrus.bankpet.account.SavingsAccount` — представляет банковский счёт, хранит баланс и владельца.
+-   `main.java.com.github.zeykrus.bankpet.model.Transaction` — неизменяемый `record` с данными о совершённой операции.
+-   `main.java.com.github.zeykrus.bankpet.model.TransactionRequest` — `record`, описывающий запрос на операцию.
+-   `main.java.com.github.zeykrus.bankpet.model.HistoryFilter` — `класс` с паттерном Builder для фильтрации истории.
+-   `main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException` — собственное checked исключение для бизнес-ситуаций.
 
 ## Технологический стек
 

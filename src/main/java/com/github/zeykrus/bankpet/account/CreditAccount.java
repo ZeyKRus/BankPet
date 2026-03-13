@@ -1,6 +1,6 @@
 package main.java.com.github.zeykrus.bankpet.account;
 
-import main.java.com.github.zeykrus.bankpet.Bank;
+import main.java.com.github.zeykrus.bankpet.model.Bank;
 import main.java.com.github.zeykrus.bankpet.interfaces.CreditAllowed;
 
 public class CreditAccount extends Account implements CreditAllowed {

@@ -1,11 +1,12 @@
 package main.java.com.github.zeykrus.bankpet.account;
 
-import main.java.com.github.zeykrus.bankpet.Bank;
+import main.java.com.github.zeykrus.bankpet.model.Bank;
 import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import main.java.com.github.zeykrus.bankpet.model.Transaction;
 import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
 import main.java.com.github.zeykrus.bankpet.model.OperationType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ public abstract class Account {
     protected final int number;
     protected final String owner;
     protected double balance;
+    protected List<Transaction> history;
 
 
     public Account(Bank bankOwner, int number, String owner, double initialBalance) {
@@ -21,18 +23,24 @@ public abstract class Account {
         this.owner = owner;
         this.bankOwner = bankOwner;
         this.balance = initialBalance;
+        this.history = new ArrayList<>();
     }
 
     //######################## Работа с историей операций #############################
 
-    protected List<Transaction> getHistory() {
-        return bankOwner.getLast10(this);
+    public void historyRequest() {
+        TransactionRequest req = new TransactionRequest(this, null, OperationType.HISTORY_CHECK, 0);
+        sendRequest(req);
+    }
+
+    public void applyHistory(List<Transaction> history) {
+        this.history = history;
     }
 
     //######################## Создание заявки на транзакцию #############################
 
     protected void sendRequest(TransactionRequest req) {
-        bankOwner.getNewRequest(req);
+        bankOwner.submitRequest(req);
     };
 
     public void depositRequest(double amount) {

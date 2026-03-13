@@ -25,7 +25,7 @@ public class FinanceCoreEngine {
 
     public FinanceCoreEngine() {
         this.bankManager = new BankManager(this);
-        this.actionHandler = new ActionHandler();
+        this.actionHandler = new ActionHandler(new HistoryManager());
         this.queueManager = new QueueManager();
         this.exceptionQueue = new ExceptionQueue();
         this.exceptionHandler = new ExceptionHandler();

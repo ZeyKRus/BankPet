@@ -19,12 +19,13 @@ import java.util.function.Consumer;
 public class ActionHandler {
 
     private final Map<OperationType, ThrowingConsumer<TransactionRequest>> requestHandler = new HashMap<>();
-    private final HistoryManager history = new HistoryManager();
+    private final HistoryManager history;
 
-    public ActionHandler() {
+    public ActionHandler(HistoryManager historyManager) {
         requestHandler.put(OperationType.DEPOSIT, this::deposit);
         requestHandler.put(OperationType.WITHDRAW, this::withdraw);
         requestHandler.put(OperationType.TRANSFER, this::transfer);
+        this.history = historyManager;
     }
 
     public void transfer(TransactionRequest req) throws InsufficientFundsException {

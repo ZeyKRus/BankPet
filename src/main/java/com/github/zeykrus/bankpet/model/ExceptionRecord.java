@@ -1,4 +1,4 @@
-package main.java.com.github.zeykrus.bankpet.model;
+package com.github.zeykrus.bankpet.model;
 
 public class ExceptionRecord {
     private final TransactionRequest req;

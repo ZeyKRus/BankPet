@@ -1,4 +1,4 @@
-package main.java.com.github.zeykrus.bankpet.interfaces;
+package com.github.zeykrus.bankpet.interfaces;
 
 @FunctionalInterface
 public interface ThrowingConsumer<T> {

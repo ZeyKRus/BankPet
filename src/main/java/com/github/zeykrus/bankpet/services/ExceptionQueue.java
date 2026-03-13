@@ -1,6 +1,6 @@
-package main.java.com.github.zeykrus.bankpet.services;
+package com.github.zeykrus.bankpet.services;
 
-import main.java.com.github.zeykrus.bankpet.model.ExceptionRecord;
+import com.github.zeykrus.bankpet.model.ExceptionRecord;
 
 import java.util.LinkedList;
 import java.util.Optional;

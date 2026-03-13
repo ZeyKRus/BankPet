@@ -1,10 +1,10 @@
-package main.java.com.github.zeykrus.bankpet.services;
+package com.github.zeykrus.bankpet.services;
 
-import main.java.com.github.zeykrus.bankpet.account.InterestBearingAccount;
-import main.java.com.github.zeykrus.bankpet.model.Bank;
-import main.java.com.github.zeykrus.bankpet.account.Account;
-import main.java.com.github.zeykrus.bankpet.account.CreditAccount;
-import main.java.com.github.zeykrus.bankpet.account.SavingsAccount;
+import com.github.zeykrus.bankpet.account.InterestBearingAccount;
+import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.account.CreditAccount;
+import com.github.zeykrus.bankpet.account.SavingsAccount;
 
 import java.util.HashMap;
 import java.util.List;

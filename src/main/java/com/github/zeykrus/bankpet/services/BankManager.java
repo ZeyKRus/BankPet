@@ -1,8 +1,8 @@
-package main.java.com.github.zeykrus.bankpet.services;
+package com.github.zeykrus.bankpet.services;
 
-import main.java.com.github.zeykrus.bankpet.FinanceCoreEngine;
-import main.java.com.github.zeykrus.bankpet.account.Account;
-import main.java.com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.FinanceCoreEngine;
+import com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.model.Bank;
 
 import java.util.*;
 import java.util.stream.Collectors;

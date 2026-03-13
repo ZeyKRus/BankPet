@@ -1,4 +1,4 @@
-package main.java.com.github.zeykrus.bankpet.interfaces;
+package com.github.zeykrus.bankpet.interfaces;
 
 public interface CreditAllowed extends PeriodicOperation {
     double DEFAULT_CREDIT_PERCENT = 0.05;

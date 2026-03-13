@@ -1,10 +1,10 @@
-package main.java.com.github.zeykrus.bankpet.account;
+package com.github.zeykrus.bankpet.account;
 
-import main.java.com.github.zeykrus.bankpet.model.Bank;
-import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
-import main.java.com.github.zeykrus.bankpet.model.Transaction;
-import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
-import main.java.com.github.zeykrus.bankpet.model.OperationType;
+import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.model.Transaction;
+import com.github.zeykrus.bankpet.model.TransactionRequest;
+import com.github.zeykrus.bankpet.model.OperationType;
 
 import java.util.ArrayList;
 import java.util.List;

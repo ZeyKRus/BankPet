@@ -1,10 +1,10 @@
-package main.java.com.github.zeykrus.bankpet.services;
+package com.github.zeykrus.bankpet.services;
 
-import main.java.com.github.zeykrus.bankpet.account.Account;
-import main.java.com.github.zeykrus.bankpet.model.HistoryFilter;
-import main.java.com.github.zeykrus.bankpet.model.OperationType;
-import main.java.com.github.zeykrus.bankpet.model.Transaction;
-import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
+import com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.model.HistoryFilter;
+import com.github.zeykrus.bankpet.model.OperationType;
+import com.github.zeykrus.bankpet.model.Transaction;
+import com.github.zeykrus.bankpet.model.TransactionRequest;
 
 import java.time.LocalDateTime;
 import java.util.*;

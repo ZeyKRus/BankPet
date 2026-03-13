@@ -1,6 +1,6 @@
-package main.java.com.github.zeykrus.bankpet.account;
+package com.github.zeykrus.bankpet.account;
 
-import main.java.com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.model.Bank;
 
 public class SavingsAccount extends Account {
 

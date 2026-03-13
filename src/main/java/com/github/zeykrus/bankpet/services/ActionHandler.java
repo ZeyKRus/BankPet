@@ -1,15 +1,15 @@
-package main.java.com.github.zeykrus.bankpet.services;
+package com.github.zeykrus.bankpet.services;
 
-import main.java.com.github.zeykrus.bankpet.account.Account;
-import main.java.com.github.zeykrus.bankpet.exception.IllegalAccountException;
-import main.java.com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
-import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
-import main.java.com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
-import main.java.com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
-import main.java.com.github.zeykrus.bankpet.model.HistoryFilter;
-import main.java.com.github.zeykrus.bankpet.model.OperationType;
-import main.java.com.github.zeykrus.bankpet.model.Transaction;
-import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
+import com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.exception.IllegalAccountException;
+import com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
+import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
+import com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
+import com.github.zeykrus.bankpet.model.HistoryFilter;
+import com.github.zeykrus.bankpet.model.OperationType;
+import com.github.zeykrus.bankpet.model.Transaction;
+import com.github.zeykrus.bankpet.model.TransactionRequest;
 
 import java.util.HashMap;
 import java.util.List;

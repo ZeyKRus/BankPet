@@ -1,6 +1,6 @@
-package main.java.com.github.zeykrus.bankpet.model;
+package com.github.zeykrus.bankpet.model;
 
-import main.java.com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.account.Account;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,7 @@
-package main.java.com.github.zeykrus.bankpet.account;
+package com.github.zeykrus.bankpet.account;
 
-import main.java.com.github.zeykrus.bankpet.model.Bank;
-import main.java.com.github.zeykrus.bankpet.interfaces.InterestBearing;
+import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.interfaces.InterestBearing;
 
 public class InterestBearingAccount extends SavingsAccount implements InterestBearing {
 

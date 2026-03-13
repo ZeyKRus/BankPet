@@ -1,14 +1,14 @@
-package main.java.com.github.zeykrus.bankpet;
+package com.github.zeykrus.bankpet;
 
-import main.java.com.github.zeykrus.bankpet.account.Account;
-import main.java.com.github.zeykrus.bankpet.exception.IllegalAccountException;
-import main.java.com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
-import main.java.com.github.zeykrus.bankpet.exception.InsufficientFundsException;
-import main.java.com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
-import main.java.com.github.zeykrus.bankpet.model.ExceptionRecord;
-import main.java.com.github.zeykrus.bankpet.model.Transaction;
-import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
-import main.java.com.github.zeykrus.bankpet.services.*;
+import com.github.zeykrus.bankpet.account.Account;
+import com.github.zeykrus.bankpet.exception.IllegalAccountException;
+import com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
+import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
+import com.github.zeykrus.bankpet.model.ExceptionRecord;
+import com.github.zeykrus.bankpet.model.Transaction;
+import com.github.zeykrus.bankpet.model.TransactionRequest;
+import com.github.zeykrus.bankpet.services.*;
 
 import java.util.LinkedList;
 import java.util.List;

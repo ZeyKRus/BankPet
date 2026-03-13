@@ -10,9 +10,9 @@ import main.java.com.github.zeykrus.bankpet.model.Transaction;
 import main.java.com.github.zeykrus.bankpet.model.TransactionRequest;
 import main.java.com.github.zeykrus.bankpet.services.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FinanceCoreEngine {
     private final BankManager bankManager;
@@ -20,6 +20,8 @@ public class FinanceCoreEngine {
     private final QueueManager queueManager;
     private final ExceptionQueue exceptionQueue;
     private final ExceptionHandler exceptionHandler;
+    private final int MAX_RETRIES = 5;
+    private final List<ExceptionRecord> deadLetterQueue;
 
     public FinanceCoreEngine() {
         this.bankManager = new BankManager(this);
@@ -27,6 +29,7 @@ public class FinanceCoreEngine {
         this.queueManager = new QueueManager();
         this.exceptionQueue = new ExceptionQueue();
         this.exceptionHandler = new ExceptionHandler();
+        this.deadLetterQueue = new LinkedList<>();
     }
 
     public void newRequest(TransactionRequest req) {
@@ -57,13 +60,19 @@ public class FinanceCoreEngine {
 
     public void exceptionHandle() {
         Optional<ExceptionRecord> opt = exceptionQueue.poll();
-        AtomicBoolean success = new AtomicBoolean(false);
         opt.ifPresentOrElse(s -> {
-            success.set(exceptionHandler.accept(s));
+            if(!exceptionHandler.accept(s)) {
+                //TODO Переделать обработку исключений. Пока все кидаем обратно в очередь, увеличиваем счетчик
+                //TODO Кидаем в deadLetter если повторяется уже в MAX_RETRIES раз
+                if (s.getFailings() >= MAX_RETRIES) {
+                    deadLetterQueue.add(s);
+                    System.err.println("Новая повторяющаяся ошибка, требуется внимание администратора");
+                } else {
+                    s.incrementFailings();
+                    exceptionQueue.add(s);
+                }
+            }
         }, () -> System.out.println("Очередь ошибок пуста"));
-        if (!success.get()) {
-            //TODO подумать над тем, какие исключения опять кинуть в очередь исключений, а какие обработать иначе
-        }
     }
 
     public void executeAll() {

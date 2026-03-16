@@ -60,6 +60,14 @@ public class HistoryManager {
         history.get(time).add(Transaction.fromRequest(time,req,success));
     }
 
+    void addToHistory(LocalDateTime dateTime, TransactionRequest req, boolean success) {
+        ArrayList<Transaction> list = history.get(dateTime);
+        if (list == null) {
+            history.put(dateTime, new ArrayList<>());
+        }
+        history.get(dateTime).add(Transaction.fromRequest(dateTime,req,success));
+    }
+
     public List<Transaction> getHistory(HistoryFilter filter) {
         if (history.isEmpty()) return new ArrayList<>();
         if (filter == null) filter = HistoryFilter.builder().build();
@@ -72,20 +80,13 @@ public class HistoryManager {
         if (start != null && finish != null && start.isAfter(finish)) return new ArrayList<>();
 
         if (start == null) start = history.firstKey();
-        if (finish == null) finish = history.lastKey();
+        if (finish == null) finish = history.lastKey().plusNanos(10);
 
         return history.subMap(start,finish).values().stream()
                 .flatMap(ArrayList::stream)
                 .filter(t -> acc == null || t.accFrom() == acc || t.accTo() == acc)
                 .filter(t -> type == null || t.operationType() == type)
                 .toList();
-    }
-
-    public List<Transaction> getLast10(Account acc) {
-        List<Transaction> list = getHistory(HistoryFilter.builder().acc(acc).build());
-        list = list.reversed();
-        list = list.subList(0,Math.min(10,list.size()));
-        return list;
     }
 
 }

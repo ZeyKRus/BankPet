@@ -3,6 +3,7 @@ package com.github.zeykrus.bankpet.model;
 import com.github.zeykrus.bankpet.account.Account;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class HistoryFilter {
     private final LocalDateTime from;
@@ -73,5 +74,18 @@ public class HistoryFilter {
 
     public OperationType getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HistoryFilter that = (HistoryFilter) o;
+        return Objects.equals(from, that.from) && Objects.equals(to, that.to) && Objects.equals(acc, that.acc) && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to, acc, type);
     }
 }

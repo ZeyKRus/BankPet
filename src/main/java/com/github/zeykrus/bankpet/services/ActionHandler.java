@@ -36,6 +36,7 @@ public class ActionHandler {
         try {
             if (accFrom == null) throw new IllegalArgumentException("Счета списания не существует");
             if (accTo == null) throw new IllegalArgumentException("Счета пополнения не существует");
+            if (accFrom == accTo) throw new IllegalArgumentException("Счета списания и счет пополнения один и тот же");
             if (amount <= 0) throw new IllegalArgumentException("Некорректная сумма перевода");
             if (!accFrom.canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств для перевода",accFrom.notEnough(amount));
 

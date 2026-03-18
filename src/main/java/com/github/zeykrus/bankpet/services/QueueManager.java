@@ -16,4 +16,6 @@ public class QueueManager {
         return Optional.ofNullable(transactionQueue.poll());
     }
 
+    public int size() { return transactionQueue.size(); }
+
 }

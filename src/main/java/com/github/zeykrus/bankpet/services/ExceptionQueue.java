@@ -16,4 +16,6 @@ public class ExceptionQueue {
     public Optional<ExceptionRecord> poll() {
         return Optional.ofNullable(queue.poll());
     }
+
+    public int size() { return queue.size(); }
 }

@@ -32,6 +32,17 @@ public class FinanceCoreEngine {
         this.deadLetterQueue = new LinkedList<>();
     }
 
+    public FinanceCoreEngine(BankManager bankManager, ActionHandler actionHandler,
+                             QueueManager queueManager, ExceptionQueue exceptionQueue,
+                             ExceptionHandler exceptionHandler) {
+        this.bankManager = bankManager;
+        this.actionHandler = actionHandler;
+        this.queueManager = queueManager;
+        this.exceptionQueue = exceptionQueue;
+        this.exceptionHandler = exceptionHandler;
+        this.deadLetterQueue = new LinkedList<>();
+    }
+
     public void newRequest(TransactionRequest req) {
         queueManager.add(req);
     }
@@ -61,7 +72,8 @@ public class FinanceCoreEngine {
     public void exceptionHandle() {
         Optional<ExceptionRecord> opt = exceptionQueue.poll();
         opt.ifPresentOrElse(s -> {
-            if(!exceptionHandler.accept(s)) {
+            boolean status = exceptionHandler.handle(s);
+            if(!status) {
                 //TODO Переделать обработку исключений. Пока все кидаем обратно в очередь, увеличиваем счетчик
                 //TODO Кидаем в deadLetter если повторяется уже в MAX_RETRIES раз
                 if (s.getFailings() >= MAX_RETRIES) {

@@ -1,12 +1,12 @@
 package com.github.zeykrus.bankpet.account;
 
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import com.github.zeykrus.bankpet.interfaces.CreditAllowed;
 
 public class CreditAccount extends Account implements CreditAllowed {
-    private double creditLimit;
+    private long creditLimit;
 
-    public CreditAccount(Bank bankOwner, int number, String owner, double initialBalance) {
+    public CreditAccount(Bank bankOwner, int number, String owner, long initialBalance) {
         super(bankOwner, number, owner, initialBalance);
         creditLimit = CreditAllowed.DEFAULT_CREDIT_LIMIT; //Базовый кредитный лимит
     }
@@ -17,30 +17,28 @@ public class CreditAccount extends Account implements CreditAllowed {
     //######################## Действия со средствами #############################
 
     @Override
-    public boolean canWithdraw(double amount) {
-        boolean can = false;
-        if ((balance + creditLimit) >= amount) can = true;
-        return can;
+    public boolean canWithdraw(long amount) {
+        return balance.get() + creditLimit >= amount;
     }
 
     @Override
-    public double notEnough(double amount) {
-        if (amount < (balance + creditLimit)) return 0;
-        else return amount - balance - creditLimit;
+    public double notEnough(long amount) {
+        if (amount < (balance.get() + creditLimit)) return 0;
+        else return amount - balance.get() - creditLimit;
     }
 
     @Override
     public void execute() {
-        if (balance < 0) balance += balance * CreditAllowed.DEFAULT_CREDIT_PERCENT;
+        if (balance.get() < 0) balance.addAndGet((long)(balance.get() * CreditAllowed.DEFAULT_CREDIT_PERCENT));
     }
 
     //######################## Геттеры и сеттеры #############################
 
-    public void setCreditLimit(double creditLimit) {
+    public void setCreditLimit(long creditLimit) {
         this.creditLimit = creditLimit;
     }
 
-    public double getCreditLimit() {
+    public long getCreditLimit() {
         return creditLimit;
     }
 }

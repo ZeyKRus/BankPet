@@ -2,10 +2,8 @@ package com.github.zeykrus.bankpet.services;
 
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.account.Account;
-import com.github.zeykrus.bankpet.model.Bank;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BankManager {
     private final FinanceCoreEngine owner;

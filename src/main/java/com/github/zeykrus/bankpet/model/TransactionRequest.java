@@ -9,7 +9,7 @@ public record TransactionRequest(
         Account accFrom,
         Account accTo,
         OperationType operationType,
-        double amount
+        long amount
 ) implements Comparable<TransactionRequest> {
 
     @Override

@@ -3,9 +3,8 @@ package com.github.zeykrus.bankpet.account;
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.interfaces.CreditAllowed;
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CreditAccountTest extends AccountTest<CreditAccount> {
@@ -19,7 +18,7 @@ public class CreditAccountTest extends AccountTest<CreditAccount> {
     @Test
     void constructorTest() {
         String owner = "Owner1";
-        double initBalance = TestConstants.POSITIVE_AMOUNT;
+        long initBalance = TestConstants.POSITIVE_AMOUNT;
         int number = 10;
 
         CreditAccount acc = new CreditAccount(bank, number, owner, initBalance);
@@ -40,35 +39,35 @@ public class CreditAccountTest extends AccountTest<CreditAccount> {
 
     @Test
     void canWithdrawMoreThanBalanceLessThanCredit() {
-        double amount = account.getBalance() + (account.getCreditLimit() / 2);
+        long amount = account.getBalance() + (account.getCreditLimit() / 2);
 
         Assertions.assertTrue(account.canWithdraw(amount), "Ожидалась возможность снятия средств");
     }
 
     @Test
     void canWithdrawMoreThanCredit() {
-        double amount = account.getBalance() + account.getCreditLimit() + TestConstants.POSITIVE_AMOUNT;
+        long amount = account.getBalance() + account.getCreditLimit() + TestConstants.POSITIVE_AMOUNT;
 
         Assertions.assertFalse(account.canWithdraw(amount),"Ожидалась нехватка средств для снятия средств");
     }
 
     @Test
     void notEnoughWhenEnough() {
-        double amount = account.getBalance() / 2;
+        long amount = account.getBalance() / 2;
 
         Assertions.assertEquals(0, account.notEnough(amount), "Ожидалось, что средств достаточно (не хватает 0)");
     }
 
     @Test
     void notEnoughMoreThanBalanceLessThanCredit() {
-        double amount = account.getBalance() + (account.getCreditLimit() / 2);
+        long amount = account.getBalance() + (account.getCreditLimit() / 2);
 
         Assertions.assertEquals(0, account.notEnough(amount), "Ожидалось, что средств достаточно (не хватает 0)");
     }
 
     @Test
     void notEnoughMoreThanCredit() {
-        double amount = account.getBalance() + account.getCreditLimit() + TestConstants.POSITIVE_AMOUNT;
+        long amount = account.getBalance() + account.getCreditLimit() + TestConstants.POSITIVE_AMOUNT;
 
         Assertions.assertEquals(TestConstants.POSITIVE_AMOUNT, account.notEnough(amount), "Ожидалась нехватка конкретной суммы средств");
     }

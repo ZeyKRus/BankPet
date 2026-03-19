@@ -6,7 +6,6 @@ import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.CreditAccount;
 import com.github.zeykrus.bankpet.account.InterestBearingAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
-import com.github.zeykrus.bankpet.model.Bank;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

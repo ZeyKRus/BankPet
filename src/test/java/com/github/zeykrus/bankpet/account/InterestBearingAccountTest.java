@@ -3,7 +3,7 @@ package com.github.zeykrus.bankpet.account;
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.interfaces.InterestBearing;
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class InterestBearingAccountTest extends AccountTest<InterestBearingAccou
     @Test
     void constructorTest() {
         String owner = "Owner1";
-        double initBalance = TestConstants.POSITIVE_AMOUNT;
+        long initBalance = TestConstants.POSITIVE_AMOUNT;
         int number = 10;
 
         InterestBearingAccount acc = new InterestBearingAccount(bank, number, owner, initBalance);
@@ -33,7 +33,7 @@ public class InterestBearingAccountTest extends AccountTest<InterestBearingAccou
 
     @Test
     void executeWhenPositive() {
-        double expectedAmount = account.getBalance() + account.getBalance() * InterestBearing.DEFAULT_RATE;
+        long expectedAmount = (long) (account.getBalance() + account.getBalance() * InterestBearing.DEFAULT_RATE);
 
         account.execute();
 

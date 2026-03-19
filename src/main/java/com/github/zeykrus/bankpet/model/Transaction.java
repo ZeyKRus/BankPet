@@ -11,7 +11,7 @@ public record Transaction(
         Account accFrom,
         Account accTo,
         OperationType operationType,
-        double amount,
+        long amount,
         boolean success
 ) implements Comparable<Transaction> {
     public static Transaction fromRequest(LocalDateTime time, TransactionRequest req, boolean success) {

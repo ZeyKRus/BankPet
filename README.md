@@ -27,7 +27,7 @@ BankPet — это консольное приложение, моделирую
 
 Проект состоит из нескольких ключевых классов:
 
--   `main.java.com.github.zeykrus.bankpet.model.Bank` — центральный класс, управляющий счетами, очередью запросов и историей.
+-   `main.java.com.github.zeykrus.bankpet.services.Bank` — центральный класс, управляющий счетами, очередью запросов и историей.
 -   `main.java.com.github.zeykrus.bankpet.account.SavingsAccount` — представляет банковский счёт, хранит баланс и владельца.
 -   `main.java.com.github.zeykrus.bankpet.model.Transaction` — неизменяемый `record` с данными о совершённой операции.
 -   `main.java.com.github.zeykrus.bankpet.model.TransactionRequest` — `record`, описывающий запрос на операцию.

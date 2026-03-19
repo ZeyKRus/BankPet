@@ -3,7 +3,7 @@ package com.github.zeykrus.bankpet.account;
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,8 @@ public abstract class  AccountTest<T extends Account> {
 
     @Test
     void depositPositive() {
-        double oldAmount = account.getBalance();
-        double exceptedAmount = oldAmount + TestConstants.POSITIVE_AMOUNT;
+        long oldAmount = account.getBalance();
+        long exceptedAmount = oldAmount + TestConstants.POSITIVE_AMOUNT;
 
         account.deposit(TestConstants.POSITIVE_AMOUNT);
 
@@ -45,7 +45,7 @@ public abstract class  AccountTest<T extends Account> {
 
     @Test
     void withdrawPositive() {
-        double amount = account.getBalance() / 2; //меньше, чем есть
+        long amount = account.getBalance() / 2; //меньше, чем есть
         double expectedAmount = account.getBalance() - amount;
 
         try {
@@ -64,14 +64,14 @@ public abstract class  AccountTest<T extends Account> {
 
     @Test
     void withdrawNotEnough() {
-        double amount = account.getBalance() * 2; //больше, чем есть
+        long amount = account.getBalance() * 2; //больше, чем есть
 
         Assertions.assertThrows(InsufficientFundsException.class, () -> account.withdraw(amount), "Ожидалась ошибка нехватки суммы для снятия средств");
     }
 
     @Test
     void withdrawNegative() {
-        double amount = TestConstants.NEGATIVE_AMOUNT; //больше, чем есть
+        long amount = TestConstants.NEGATIVE_AMOUNT; //больше, чем есть
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> account.withdraw(amount), "Ожидалась ошибка некорректной суммы для снятия средств");
     }

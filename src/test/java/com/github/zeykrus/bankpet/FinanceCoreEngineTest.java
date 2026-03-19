@@ -4,7 +4,7 @@ import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.CreditAccount;
 import com.github.zeykrus.bankpet.account.InterestBearingAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import com.github.zeykrus.bankpet.model.ExceptionRecord;
 import com.github.zeykrus.bankpet.model.OperationType;
 import com.github.zeykrus.bankpet.model.TransactionRequest;

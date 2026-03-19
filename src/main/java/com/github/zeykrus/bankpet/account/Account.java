@@ -1,27 +1,27 @@
 package com.github.zeykrus.bankpet.account;
 
-import com.github.zeykrus.bankpet.model.Bank;
+import com.github.zeykrus.bankpet.services.Bank;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import com.github.zeykrus.bankpet.model.Transaction;
 import com.github.zeykrus.bankpet.model.TransactionRequest;
 import com.github.zeykrus.bankpet.model.OperationType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class Account {
     protected final Bank bankOwner;
     protected final int number;
     protected final String owner;
-    protected double balance;
+    protected AtomicLong balance;
 
 
-    public Account(Bank bankOwner, int number, String owner, double initialBalance) {
+    public Account(Bank bankOwner, int number, String owner, long initialBalance) {
         this.number = number;
         this.owner = owner;
         this.bankOwner = bankOwner;
-        this.balance = initialBalance;
+        this.balance = new AtomicLong(initialBalance);
     }
 
     //######################## Работа с историей операций #############################
@@ -36,14 +36,14 @@ public abstract class Account {
         bankOwner.submitRequest(req);
     };
 
-    public void depositRequest(double amount) {
+    public void depositRequest(long amount) {
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
 
         TransactionRequest req = new TransactionRequest(this, null, OperationType.DEPOSIT, amount);
         sendRequest(req);
     }
 
-    public void transferRequest(Account accTo, double amount) throws InsufficientFundsException {
+    public void transferRequest(Account accTo, long amount) throws InsufficientFundsException {
         if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
         if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
         if (this == accTo) throw new IllegalArgumentException("Нельзя переводить самому себе");
@@ -53,7 +53,7 @@ public abstract class Account {
         sendRequest(req);
     }
 
-    public void withdrawRequest(double amount) throws InsufficientFundsException {
+    public void withdrawRequest(long amount) throws InsufficientFundsException {
         if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
         if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
 
@@ -63,25 +63,29 @@ public abstract class Account {
 
     //######################## Действия со средствами #############################
 
-    public void deposit(double amount) {
+    public void deposit(long amount) {
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
-        balance += amount;
+        balance.addAndGet(amount);
     }
 
-    public void withdraw(double amount) throws InsufficientFundsException {
-        if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
-        if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
-        balance -= amount;
+    public void withdraw(long amount) throws InsufficientFundsException {
+        while(true) {
+            long current = balance.get();
+            if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
+            if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
+
+            if(balance.compareAndSet(current, current - amount)) break;
+        }
     }
 
-    public abstract boolean canWithdraw(double amount);
+    public abstract boolean canWithdraw(long amount);
 
-    public abstract double notEnough(double amount);
+    public abstract double notEnough(long amount);
 
     //######################## Геттеры и сеттеры #############################
 
-    public double getBalance() {
-        return balance;
+    public long getBalance() {
+        return balance.get();
     }
 
     public String getOwner() {

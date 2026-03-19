@@ -31,7 +31,7 @@ public class ActionHandler {
     public void transfer(TransactionRequest req) throws InsufficientFundsException {
         Account accFrom = req.accFrom();
         Account accTo = req.accTo();
-        double amount = req.amount();
+        long amount = req.amount();
 
         try {
             if (accFrom == null) throw new IllegalArgumentException("Счета списания не существует");
@@ -52,7 +52,7 @@ public class ActionHandler {
 
     public void deposit(TransactionRequest req) {
         Account acc = req.accFrom();
-        double amount = req.amount();
+        long amount = req.amount();
 
         try {
             if (acc == null) throw new IllegalArgumentException("Счета не существует");
@@ -69,7 +69,7 @@ public class ActionHandler {
 
     public void withdraw(TransactionRequest req) throws InsufficientFundsException {
         Account acc = req.accFrom();
-        double amount = req.amount();
+        long amount = req.amount();
 
         try {
             if (acc == null) throw new IllegalArgumentException("Счета не существует");

@@ -98,4 +98,8 @@ public class FinanceCoreEngine {
         return actionHandler.getHistory(acc);
     }
 
+    public Bank createBank(String name) {
+        return bankManager.generateNewBank(name);
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.github.zeykrus.bankpet.services;
 
 import com.github.zeykrus.bankpet.account.InterestBearingAccount;
-import com.github.zeykrus.bankpet.model.Bank;
 import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.CreditAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
@@ -20,21 +19,21 @@ public class AccountManager {
         this.bank = owner;
     }
 
-    public SavingsAccount createSavingAccount(String ownerUser, double initialBalance) {
+    public SavingsAccount createSavingAccount(String ownerUser, long initialBalance) {
         SavingsAccount current = new SavingsAccount(this.bank, accountNumber, ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
         accountNumber++;
         return current;
     }
 
-    public InterestBearingAccount createInterestBearingAccount(String ownerUser, double initialBalance) {
+    public InterestBearingAccount createInterestBearingAccount(String ownerUser, long initialBalance) {
         InterestBearingAccount current = new InterestBearingAccount(this.bank, accountNumber, ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
         accountNumber++;
         return current;
     }
 
-    public CreditAccount createCreditAccount(String ownerUser, double initialBalance) {
+    public CreditAccount createCreditAccount(String ownerUser, long initialBalance) {
         CreditAccount current = new CreditAccount(this.bank, accountNumber, ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
         accountNumber++;

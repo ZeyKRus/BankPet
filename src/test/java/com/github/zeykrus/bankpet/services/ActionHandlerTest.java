@@ -5,7 +5,6 @@ import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
-import com.github.zeykrus.bankpet.model.Bank;
 import com.github.zeykrus.bankpet.model.HistoryFilter;
 import com.github.zeykrus.bankpet.model.OperationType;
 import com.github.zeykrus.bankpet.model.TransactionRequest;

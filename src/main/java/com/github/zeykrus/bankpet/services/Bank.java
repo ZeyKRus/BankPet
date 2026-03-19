@@ -1,11 +1,12 @@
-package com.github.zeykrus.bankpet.model;
+package com.github.zeykrus.bankpet.services;
 
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.CreditAccount;
 import com.github.zeykrus.bankpet.account.InterestBearingAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
-import com.github.zeykrus.bankpet.services.AccountManager;
+import com.github.zeykrus.bankpet.model.Transaction;
+import com.github.zeykrus.bankpet.model.TransactionRequest;
 
 import java.util.List;
 
@@ -24,15 +25,15 @@ public class Bank {
         this.name = name;
     }
 
-    public SavingsAccount createSavingAccount(String ownerUser, double initialBalance) {
+    public SavingsAccount createSavingAccount(String ownerUser, long initialBalance) {
         return accountManager.createSavingAccount(ownerUser, initialBalance);
     }
 
-    public InterestBearingAccount createInterestBearingAccount(String ownerUser, double initialBalance) {
+    public InterestBearingAccount createInterestBearingAccount(String ownerUser, long initialBalance) {
         return accountManager.createInterestBearingAccount(ownerUser, initialBalance);
     }
 
-    public CreditAccount createCreditAccount(String ownerUser, double initialBalance) {
+    public CreditAccount createCreditAccount(String ownerUser, long initialBalance) {
         return accountManager.createCreditAccount(ownerUser, initialBalance);
     }
 

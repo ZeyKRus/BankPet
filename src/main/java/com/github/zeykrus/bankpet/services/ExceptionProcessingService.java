@@ -1,5 +1,7 @@
 package com.github.zeykrus.bankpet.services;
 
+import com.github.zeykrus.bankpet.model.ExceptionRecord;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +38,7 @@ public class ExceptionProcessingService {
     public void shutdown() {
         if (running.compareAndSet(true, false)) {
             for (ExceptionProcessor proc : processors) proc.stop();
+            for (ExceptionProcessor ignored : processors) exceptionQueue.add(ExceptionRecord.POISON);
             processors.clear();
             executor.shutdown();
             try {

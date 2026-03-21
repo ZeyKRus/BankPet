@@ -20,11 +20,17 @@ public class ExceptionProcessor implements Runnable {
             ExceptionRecord rec = null;
             try {
                 rec = exceptionQueue.take();
+                if (rec.equals(ExceptionRecord.POISON)) {
+                    Thread.currentThread().interrupt();
+                    running = false;
+                    break;
+                }
                 exceptionHandler.handle(rec);
             } catch (InterruptedException e) {
                 System.err.println("Ошибка в обработчике: " + e.getMessage());
                 Thread.currentThread().interrupt();
                 running = false;
+                break;
             }
         }
     }

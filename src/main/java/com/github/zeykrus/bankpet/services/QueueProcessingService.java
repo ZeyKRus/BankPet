@@ -1,5 +1,7 @@
 package com.github.zeykrus.bankpet.services;
 
+import com.github.zeykrus.bankpet.model.TransactionRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +39,7 @@ public class QueueProcessingService {
     public void shutdown() {
         if (running.compareAndSet(true, false)) {
             for (RequestProcessor proc : processors) proc.stop();
+            for (RequestProcessor ignored : processors) queueManager.add(TransactionRequest.POISON);
             processors.clear();
             executor.shutdown();
             try {

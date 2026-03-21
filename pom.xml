@@ -18,9 +18,11 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Твои текущие версии, которые уже есть в кэше -->
+        <!-- Версии библиотек -->
         <junit.version>6.1.0-M1</junit.version>
         <mockito.version>5.23.0</mockito.version>
+        <slf4j.version>2.1.0-alpha1</slf4j.version>
+        <logback.version>1.5.32</logback.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
 
@@ -65,6 +67,21 @@
             <artifactId>annotations</artifactId>
             <version>26.1.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- SLF4J API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- Logback (реализация) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

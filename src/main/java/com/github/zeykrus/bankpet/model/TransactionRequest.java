@@ -12,6 +12,12 @@ public record TransactionRequest(
         long amount
 ) implements Comparable<TransactionRequest> {
 
+    public static final TransactionRequest POISON;
+
+    static {
+        POISON = new TransactionRequest(null, null, null, Integer.MAX_VALUE);
+    }
+
     @Override
     public int compareTo(@NotNull TransactionRequest o) {
         return Double.compare(o.amount(),this.amount());

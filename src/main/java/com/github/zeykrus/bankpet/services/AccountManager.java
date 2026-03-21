@@ -9,34 +9,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AccountManager {
     private final Bank bank;
-    private final Map<Integer, Account> accounts = new HashMap<>();
-    private int accountNumber = 0;
+    private final Map<Integer, Account> accounts = new ConcurrentHashMap<>();
+    private final AtomicInteger accountNumber = new AtomicInteger(0);
 
     public AccountManager(Bank owner) {
         this.bank = owner;
     }
 
     public SavingsAccount createSavingAccount(String ownerUser, long initialBalance) {
-        SavingsAccount current = new SavingsAccount(this.bank, accountNumber, ownerUser, initialBalance);
+        SavingsAccount current = new SavingsAccount(this.bank, accountNumber.getAndIncrement(), ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
-        accountNumber++;
         return current;
     }
 
     public InterestBearingAccount createInterestBearingAccount(String ownerUser, long initialBalance) {
-        InterestBearingAccount current = new InterestBearingAccount(this.bank, accountNumber, ownerUser, initialBalance);
+        InterestBearingAccount current = new InterestBearingAccount(this.bank, accountNumber.getAndIncrement(), ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
-        accountNumber++;
         return current;
     }
 
     public CreditAccount createCreditAccount(String ownerUser, long initialBalance) {
-        CreditAccount current = new CreditAccount(this.bank, accountNumber, ownerUser, initialBalance);
+        CreditAccount current = new CreditAccount(this.bank, accountNumber.getAndIncrement(), ownerUser, initialBalance);
         accounts.put(current.getNumber(),current);
-        accountNumber++;
         return current;
     }
 

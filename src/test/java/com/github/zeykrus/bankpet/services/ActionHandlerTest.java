@@ -17,6 +17,7 @@ public class ActionHandlerTest {
 
     private ActionHandler actionHandler;
     private HistoryManager mockHistory;
+    private ExceptionQueue mockExceptions;
     private Bank bank;
     private FinanceCoreEngine core;
     private Account accFrom;
@@ -25,7 +26,7 @@ public class ActionHandlerTest {
     @BeforeEach
     void setUp() {
         mockHistory = Mockito.mock(HistoryManager.class);
-        actionHandler = new ActionHandler(mockHistory);
+        actionHandler = new ActionHandler(mockHistory,mockExceptions);
         core = new FinanceCoreEngine();
         bank = new Bank("Bank1",0,core);
         accFrom = new SavingsAccount(bank,0, TestConstants.PERSON_OWNER,TestConstants.BIG_POSITIVE_AMOUNT);

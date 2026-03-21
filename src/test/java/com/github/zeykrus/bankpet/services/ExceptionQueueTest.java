@@ -24,7 +24,7 @@ public class ExceptionQueueTest {
     }
 
     @Test
-    void addNewTransactionRequest() {
+    void addNewTransactionRequest() throws InterruptedException {
         Account accFrom = new SavingsAccount(bank,0, TestConstants.PERSON_OWNER,TestConstants.BIG_POSITIVE_AMOUNT);
         Account accTo = new SavingsAccount(bank,1, TestConstants.PERSON_OWNER,TestConstants.BIG_POSITIVE_AMOUNT);
         TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
@@ -32,7 +32,7 @@ public class ExceptionQueueTest {
 
         exceptionQueue.add(exc);
 
-        Assertions.assertEquals(exc, exceptionQueue.poll().get(), "Ожидался тот же самый объект в очереди ошибок");
+        Assertions.assertEquals(exc, exceptionQueue.take(), "Ожидался тот же самый объект в очереди ошибок");
     }
 
     @Test

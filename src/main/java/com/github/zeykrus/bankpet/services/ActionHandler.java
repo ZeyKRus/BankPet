@@ -6,10 +6,7 @@ import com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
 import com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
-import com.github.zeykrus.bankpet.model.HistoryFilter;
-import com.github.zeykrus.bankpet.model.OperationType;
-import com.github.zeykrus.bankpet.model.Transaction;
-import com.github.zeykrus.bankpet.model.TransactionRequest;
+import com.github.zeykrus.bankpet.model.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +17,14 @@ public class ActionHandler {
 
     private final Map<OperationType, ThrowingConsumer<TransactionRequest>> requestHandler = new HashMap<>();
     private final HistoryManager history;
+    private final ExceptionQueue exceptionQueue;
 
-    public ActionHandler(HistoryManager historyManager) {
+    public ActionHandler(HistoryManager historyManager, ExceptionQueue exceptionQueue) {
         requestHandler.put(OperationType.DEPOSIT, this::deposit);
         requestHandler.put(OperationType.WITHDRAW, this::withdraw);
         requestHandler.put(OperationType.TRANSFER, this::transfer);
         this.history = historyManager;
+        this.exceptionQueue = exceptionQueue;
     }
 
     public void transfer(TransactionRequest req) throws InsufficientFundsException {
@@ -89,7 +88,27 @@ public class ActionHandler {
     }
 
 
-    public void handle(TransactionRequest req) throws Exception {
+    public void handle(TransactionRequest req) {
+        try {
+            if (req == null) throw new IllegalTransactionRequestException("Некорректный запрос на транзакцию");
+            requestHandler.get(req.operationType()).accept(req);
+        } catch (InsufficientFundsException e) {
+            System.err.println("Бизнес-ошибка при обработке запроса: "+e.getMessage());
+            exceptionQueue.add(new ExceptionRecord(req,e));
+        } catch (IllegalArgumentException | IllegalStateException |
+                 IllegalAccountException e) {
+            System.err.println("Ошибка валидации: "+e.getMessage());
+            exceptionQueue.add(new ExceptionRecord(req,e));
+        } catch (IllegalTransactionRequestException e) {
+            System.err.println("Ошибка запроса: " + e.getMessage());
+            exceptionQueue.add(new ExceptionRecord(req, e));
+        } catch (Exception e) {
+            System.err.println("Неизвестная ошибка при выполнения запроса "+req+" Сообщение: "+e.getMessage());
+            exceptionQueue.add(new ExceptionRecord(req,e));
+        }
+    }
+
+    public void handleException(TransactionRequest req) throws Exception {
         if (req == null) throw new IllegalTransactionRequestException("Некорректный запрос на транзакцию");
         requestHandler.get(req.operationType()).accept(req);
     }

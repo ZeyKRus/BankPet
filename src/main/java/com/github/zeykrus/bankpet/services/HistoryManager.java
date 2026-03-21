@@ -22,25 +22,25 @@ public class HistoryManager {
                 .filter(Transaction::success);
     }
 
-    public Map<OperationType, Long> getStatistic() {
+    synchronized public Map<OperationType, Long> getStatistic() {
         return successTransactions()
                 .collect(Collectors.groupingBy(Transaction::operationType,Collectors.counting()));
 
     }
 
-    public long getCountByType(OperationType type) {
+    synchronized public long getCountByType(OperationType type) {
         return successTransactions()
                 .filter(t -> t.operationType() == type)
                 .count();
     }
 
-    public double getSumByType(OperationType type) {
+    synchronized public double getSumByType(OperationType type) {
         return successTransactions()
                 .filter(t -> t.operationType() == type)
                 .collect(Collectors.summingDouble(Transaction::amount));
     }
 
-    public List<Transaction> getTopTransactions(OperationType type, int n) {
+    synchronized public List<Transaction> getTopTransactions(OperationType type, int n) {
         if (n <= 0) return List.of();
         return successTransactions()
                 .filter(t -> t.operationType() == type)
@@ -51,7 +51,7 @@ public class HistoryManager {
 
     //######################## Обработка истории #############################
 
-    public void addToHistory(TransactionRequest req, boolean success) {
+    synchronized public void addToHistory(TransactionRequest req, boolean success) {
         LocalDateTime time = LocalDateTime.now();
         ArrayList<Transaction> list = history.get(time);
         if (list == null) {
@@ -60,7 +60,7 @@ public class HistoryManager {
         history.get(time).add(Transaction.fromRequest(time,req,success));
     }
 
-    void addToHistory(LocalDateTime dateTime, TransactionRequest req, boolean success) {
+    synchronized void addToHistory(LocalDateTime dateTime, TransactionRequest req, boolean success) {
         ArrayList<Transaction> list = history.get(dateTime);
         if (list == null) {
             history.put(dateTime, new ArrayList<>());
@@ -68,7 +68,7 @@ public class HistoryManager {
         history.get(dateTime).add(Transaction.fromRequest(dateTime,req,success));
     }
 
-    public List<Transaction> getHistory(HistoryFilter filter) {
+    synchronized public List<Transaction> getHistory(HistoryFilter filter) {
         if (history.isEmpty()) return new ArrayList<>();
         if (filter == null) filter = HistoryFilter.builder().build();
 

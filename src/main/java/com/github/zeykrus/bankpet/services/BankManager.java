@@ -4,21 +4,25 @@ import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.account.Account;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BankManager {
     private final FinanceCoreEngine owner;
     private final Map<Integer, Bank> bankList;
-    private static int counter;
+    private final static AtomicInteger counter;
+
+    static {
+        counter = new AtomicInteger(0);
+    }
 
     public BankManager(FinanceCoreEngine owner) {
         this.owner = owner;
-        this.bankList = new HashMap<>();
+        this.bankList = new ConcurrentHashMap<>();
     }
 
     private static int generateBankNumber() {
-        int current = counter;
-        counter++;
-        return current;
+        return counter.getAndIncrement();
     }
 
     public Bank generateNewBank(String name) {

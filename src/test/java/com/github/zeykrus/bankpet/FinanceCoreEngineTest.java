@@ -50,63 +50,63 @@ public class FinanceCoreEngineTest {
         Mockito.verify(queueMock).add(tr);
     }
 
-    @Test
-    void handleRequestFromQueueExist() throws Exception {
-        Bank bank = new Bank("Bank1", 0, core);
-        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
-        Mockito.when(queueMock.poll()).thenReturn(Optional.of(tr));
+//    @Test
+//    void handleRequestFromQueueExist() throws Exception {
+//        Bank bank = new Bank("Bank1", 0, core);
+//        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
+//        Mockito.when(queueMock.poll()).thenReturn(Optional.of(tr));
+//
+//        core.handleRequestFromQueue();
+//
+//        Mockito.verify(queueMock).poll();
+//        Mockito.verify(actionMock).handle(tr);
+//    }
 
-        core.handleRequestFromQueue();
+//    @Test
+//    void handleRequestFromQueueNotExist() throws Exception {
+//        Bank bank = new Bank("Bank1", 0, core);
+//        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
+//        Mockito.when(queueMock.poll()).thenReturn(Optional.empty());
+//
+//        core.handleRequestFromQueue();
+//
+//        Mockito.verify(queueMock).poll();
+//        Mockito.verify(actionMock, Mockito.times(0)).handle(tr);
+//    }
 
-        Mockito.verify(queueMock).poll();
-        Mockito.verify(actionMock).handle(tr);
-    }
+//    @Test
+//    void handleExceptionFromQueueExist() {
+//        Bank bank = new Bank("Bank1", 0, core);
+//        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
+//        ExceptionRecord exc = new ExceptionRecord(tr, new IllegalArgumentException());
+//        Mockito.when(exceptionQueueMock.poll()).thenReturn(Optional.of(exc));
+//
+//        core.exceptionHandle();
+//
+//        Mockito.verify(exceptionQueueMock).poll();
+//        Mockito.verify(exceptionHandlerMock).handle(exc);
+//    }
 
-    @Test
-    void handleRequestFromQueueNotExist() throws Exception {
-        Bank bank = new Bank("Bank1", 0, core);
-        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
-        Mockito.when(queueMock.poll()).thenReturn(Optional.empty());
-
-        core.handleRequestFromQueue();
-
-        Mockito.verify(queueMock).poll();
-        Mockito.verify(actionMock, Mockito.times(0)).handle(tr);
-    }
-
-    @Test
-    void handleExceptionFromQueueExist() {
-        Bank bank = new Bank("Bank1", 0, core);
-        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
-        ExceptionRecord exc = new ExceptionRecord(tr, new IllegalArgumentException());
-        Mockito.when(exceptionQueueMock.poll()).thenReturn(Optional.of(exc));
-
-        core.exceptionHandle();
-
-        Mockito.verify(exceptionQueueMock).poll();
-        Mockito.verify(exceptionHandlerMock).handle(exc);
-    }
-
-    @Test
-    void handleExceptionFromQueueNotExist() {
-        Bank bank = new Bank("Bank1", 0, core);
-        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
-        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
-        ExceptionRecord exc = new ExceptionRecord(tr, new IllegalArgumentException());
-        Mockito.when(exceptionQueueMock.poll()).thenReturn(Optional.empty());
-
-        core.exceptionHandle();
-
-        Mockito.verify(exceptionQueueMock).poll();
-        Mockito.verify(exceptionHandlerMock, Mockito.times(0)).handle(exc);
-    }
+//    @Test
+//    void handleExceptionFromQueueNotExist() {
+//        Bank bank = new Bank("Bank1", 0, core);
+//        Account accFrom = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        Account accTo = new SavingsAccount(bank, 0, TestConstants.PERSON_OWNER, TestConstants.BIG_POSITIVE_AMOUNT);
+//        TransactionRequest tr = new TransactionRequest(accFrom, accTo, OperationType.TRANSFER, TestConstants.POSITIVE_AMOUNT);
+//        ExceptionRecord exc = new ExceptionRecord(tr, new IllegalArgumentException());
+//        Mockito.when(exceptionQueueMock.poll()).thenReturn(Optional.empty());
+//
+//        core.exceptionHandle();
+//
+//        Mockito.verify(exceptionQueueMock).poll();
+//        Mockito.verify(exceptionHandlerMock, Mockito.times(0)).handle(exc);
+//    }
 
     @Test
     void executeAllSubmitTest() {

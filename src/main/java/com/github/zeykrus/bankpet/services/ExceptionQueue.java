@@ -2,19 +2,18 @@ package com.github.zeykrus.bankpet.services;
 
 import com.github.zeykrus.bankpet.model.ExceptionRecord;
 
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExceptionQueue {
-    private final Queue<ExceptionRecord> queue = new LinkedList<>();;
+    private final BlockingQueue<ExceptionRecord> queue = new LinkedBlockingQueue<>();
 
     public void add(ExceptionRecord e) {
         queue.add(e);
     }
 
-    public Optional<ExceptionRecord> poll() {
-        return Optional.ofNullable(queue.poll());
+    public ExceptionRecord take() throws InterruptedException {
+        return queue.take();
     }
 
     public int size() { return queue.size(); }

@@ -20,16 +20,22 @@ public class FinanceCoreEngine {
     private final QueueManager queueManager;
     private final ExceptionQueue exceptionQueue;
     private final ExceptionHandler exceptionHandler;
+    private final QueueProcessingService queueProcessingService;
+    private final ExceptionProcessingService exceptionProcessingService;
+
     private final int MAX_RETRIES = 5;
-    private final List<ExceptionRecord> deadLetterQueue;
+
+
+
 
     public FinanceCoreEngine() {
         this.bankManager = new BankManager(this);
-        this.actionHandler = new ActionHandler(new HistoryManager());
         this.queueManager = new QueueManager();
         this.exceptionQueue = new ExceptionQueue();
-        this.exceptionHandler = new ExceptionHandler();
-        this.deadLetterQueue = new LinkedList<>();
+        this.actionHandler = new ActionHandler(new HistoryManager(), exceptionQueue);
+        this.exceptionHandler = new ExceptionHandler(exceptionQueue,actionHandler);
+        this.queueProcessingService = new QueueProcessingService(queueManager, actionHandler);
+        this.exceptionProcessingService = new ExceptionProcessingService(exceptionQueue, exceptionHandler);
     }
 
     public FinanceCoreEngine(BankManager bankManager, ActionHandler actionHandler,
@@ -40,52 +46,30 @@ public class FinanceCoreEngine {
         this.queueManager = queueManager;
         this.exceptionQueue = exceptionQueue;
         this.exceptionHandler = exceptionHandler;
-        this.deadLetterQueue = new LinkedList<>();
+        this.queueProcessingService = new QueueProcessingService(queueManager, actionHandler);
+        this.exceptionProcessingService = new ExceptionProcessingService(exceptionQueue, exceptionHandler);
     }
 
     public void newRequest(TransactionRequest req) {
         queueManager.add(req);
     }
 
-    public void handleRequestFromQueue() {
-        Optional<TransactionRequest> opt = queueManager.poll();
-        opt.ifPresentOrElse(s -> {
-            try {
-                actionHandler.handle(s);
-            } catch (InsufficientFundsException e) {
-                System.err.println("Бизнес-ошибка при обработке запроса: "+e.getMessage());
-                exceptionQueue.add(new ExceptionRecord(s,e));
-            } catch (IllegalArgumentException | IllegalStateException |
-                    IllegalAccountException e) {
-                System.err.println("Ошибка валидации: "+e.getMessage());
-                exceptionQueue.add(new ExceptionRecord(s,e));
-            } catch (IllegalTransactionRequestException e) {
-                System.err.println("Ошибка запроса: "+e.getMessage());
-                exceptionQueue.add(new ExceptionRecord(s,e));
-            } catch (Exception e) {
-                System.err.println("Неизвестная ошибка при выполнения запроса "+s+" Сообщение: "+e.getMessage());
-                exceptionQueue.add(new ExceptionRecord(s,e));
-            }
-        }, () -> System.out.println("Очередь пуста"));
+    public void startProcessingQueue(int threadCount) {
+        queueProcessingService.start(threadCount);
     }
 
-    public void exceptionHandle() {
-        Optional<ExceptionRecord> opt = exceptionQueue.poll();
-        opt.ifPresentOrElse(s -> {
-            boolean status = exceptionHandler.handle(s);
-            if(!status) {
-                //TODO Переделать обработку исключений. Пока все кидаем обратно в очередь, увеличиваем счетчик
-                //TODO Кидаем в deadLetter если повторяется уже в MAX_RETRIES раз
-                if (s.getFailings() >= MAX_RETRIES) {
-                    deadLetterQueue.add(s);
-                    System.err.println("Новая повторяющаяся ошибка, требуется внимание администратора");
-                } else {
-                    s.incrementFailings();
-                    exceptionQueue.add(s);
-                }
-            }
-        }, () -> System.out.println("Очередь ошибок пуста"));
+    public void stopProcessingQueue() {
+        queueProcessingService.shutdown();
     }
+
+    public void startProcessingExceptions(int threadCount) {
+        exceptionProcessingService.start(threadCount);
+    }
+
+    public void stopProcessingExceptions() {
+        exceptionProcessingService.shutdown();
+    }
+
 
     public void executeAll() {
         List<Account> accounts = bankManager.getAllAccounts();

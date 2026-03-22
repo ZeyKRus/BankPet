@@ -1,5 +1,21 @@
 package com.github.zeykrus.bankpet.model;
 
+/**
+ * Запись об ошибке при обработке транзакции.
+ * <p>
+ * Содержит:
+ * <ul>
+ *   <li>исходный запрос, вызвавший ошибку</li>
+ *   <li>исключение, которое возникло</li>
+ *   <li>счётчик неудачных попыток обработки</li>
+ * </ul>
+ * 
+ *
+ * <p>
+ * Используется в {@link com.github.zeykrus.bankpet.services.ExceptionHandler}
+ * для реализации механизма повторных попыток (retry) и Dead Letter Queue.
+ * 
+ */
 public class ExceptionRecord {
     public static final ExceptionRecord POISON;
     private final TransactionRequest req;
@@ -11,6 +27,12 @@ public class ExceptionRecord {
         POISON.failings = -1;
     }
 
+    /**
+     * Создаёт запись об ошибке.
+     *
+     * @param req       запрос, вызвавший ошибку
+     * @param exception возникшее исключение
+     */
     public ExceptionRecord(TransactionRequest req, Exception exception)
     {
         this.req = req;
@@ -22,14 +44,29 @@ public class ExceptionRecord {
         failings++;
     }
 
+    /**
+     * Возвращает исходный запрос.
+     *
+     * @return запрос
+     */
     public TransactionRequest getReq() {
         return req;
     }
 
+    /**
+     * Возвращает исключение.
+     *
+     * @return исключение
+     */
     public Exception getException() {
         return exception;
     }
 
+    /**
+     * Возвращает количество неудачных попыток.
+     *
+     * @return счётчик попыток
+     */
     public int getFailings() {
         return failings;
     }

@@ -13,6 +13,32 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Абстрактный класс, представляющий банковский счёт.
+ * <p>
+ * Счёт обладает:
+ * <ul>
+ *   <li>уникальным номером (в рамках банка)</li>
+ *   <li>владельцем</li>
+ *   <li>атомарным балансом ({@link AtomicLong})</li>
+ * </ul>
+ *
+ *
+ * <p>
+ * Баланс потокобезопасен и реализован через CAS.
+ * Операции пополнения и снятия могут выполняться из разных потоков одновременно.
+ * 
+ *
+ * <p>
+ * Конкретные типы счетов ({@link SavingsAccount}, {@link CreditAccount},
+ * {@link InterestBearingAccount}) определяют логику проверки возможности снятия
+ * и расчёта недостающей суммы.
+ * 
+ *
+ * @see SavingsAccount
+ * @see CreditAccount
+ * @see InterestBearingAccount
+ */
 public abstract class Account {
     private static final Logger log = LoggerFactory.getLogger(Account.class);
     private static final int MAX_TRIES_ON_WITHDRAW = 5;
@@ -42,6 +68,15 @@ public abstract class Account {
         bankOwner.submitRequest(req);
     };
 
+    /**
+     * Отправляет запрос на пополнение счёта.
+     * <p>
+     * Запрос помещается в очередь и будет обработан асинхронно.
+     * 
+     *
+     * @param amount сумма пополнения
+     * @throws IllegalArgumentException when bad
+     */
     public void depositRequest(long amount) {
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
 
@@ -49,6 +84,17 @@ public abstract class Account {
         sendRequest(req);
     }
 
+    /**
+     * Отправляет запрос на перевод средств на другой счет.
+     * <p>
+     * Запрос помещается в очередь и будет обработан асинхронно.
+     * 
+     *
+     * @param accTo счет-получатель
+     * @param amount количество средств
+     * @throws InsufficientFundsException если на счёте недостаточно средств
+     * @throws IllegalArgumentException if amount less 0
+     */
     public void transferRequest(Account accTo, long amount) throws InsufficientFundsException {
         if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
         if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
@@ -59,6 +105,13 @@ public abstract class Account {
         sendRequest(req);
     }
 
+    /**
+     * Отправляет запрос на снятие средств.
+     *
+     * @param amount сумма снятия
+     * @throws InsufficientFundsException если на счёте недостаточно средств
+     * @throws IllegalArgumentException if amount less 0
+     */
     public void withdrawRequest(long amount) throws InsufficientFundsException {
         if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
         if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
@@ -69,12 +122,35 @@ public abstract class Account {
 
     //######################## Действия со средствами #############################
 
+    /**
+     * Пополняет счёт на указанную сумму.
+     * <p>
+     * Операция атомарна и потокобезопасна.
+     * 
+     *
+     * @param amount сумма пополнения (должна быть > 0)
+     * @throws IllegalArgumentException if amount less 0
+     */
     public void deposit(long amount) {
         log.debug("Попытка пополнения {} средств на счету {}",amount,this);
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
         balance.addAndGet(amount);
     }
 
+    /**
+     * Снимает указанную сумму со счёта.
+     * <p>
+     * Операция использует CAS (Compare-And-Set) и может повторяться при высокой
+     * конкуренции. Количество попыток ограничено константой
+     * {@value #MAX_TRIES_ON_WITHDRAW}. После превышения лимита кидается
+     * {@link WithdrawCASException}.
+     * 
+     *
+     * @param amount сумма снятия (должна быть > 0)
+     * @throws IllegalArgumentException если amount less 0
+     * @throws InsufficientFundsException если на счёте недостаточно средств
+     * @throws WithdrawCASException если превышен лимит попыток CAS
+     */
     public void withdraw(long amount) throws InsufficientFundsException, WithdrawCASException {
         log.debug("Попытка снятия {} средств на счету {}",amount,this);
         int trying = 0;
@@ -93,9 +169,28 @@ public abstract class Account {
         }
     }
 
+    /**
+     * Проверяет возможность снятия указанной суммы.
+     * <p>
+     * Реализуется в наследниках в зависимости от типа счёта:
+     * <ul>
+     *   <li>{@link SavingsAccount} — проверка balance >= amount</li>
+     *   <li>{@link CreditAccount} — проверка balance + creditLimit >= amount</li>
+     * </ul>
+     * 
+     *
+     * @param amount сумма снятия
+     * @return true если снятие возможно, иначе false
+     */
     public abstract boolean canWithdraw(long amount);
 
-    public abstract double notEnough(long amount);
+    /**
+     * Возвращает сумму, которой не хватает для снятия.
+     *
+     * @param amount желаемая сумма снятия
+     * @return 0 если средств достаточно, иначе amount - доступный_баланс
+     */
+    public abstract long notEnough(long amount);
 
     //######################## Геттеры и сеттеры #############################
 

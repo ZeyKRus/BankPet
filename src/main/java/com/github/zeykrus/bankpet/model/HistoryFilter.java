@@ -5,6 +5,19 @@ import com.github.zeykrus.bankpet.account.Account;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Фильтр для выборки истории операций.
+ * <p>
+ * Использует паттерн Builder для удобного создания фильтров.
+ * Позволяет фильтровать историю по:
+ * <ul>
+ *   <li>диапазону дат ({@link #from}, {@link #to})</li>
+ *   <li>конкретному счёту ({@link #acc})</li>
+ *   <li>типу операции ({@link #type})</li>
+ * </ul>
+ * 
+ *
+ */
 public class HistoryFilter {
     private final LocalDateTime from;
     private final LocalDateTime to;
@@ -18,6 +31,9 @@ public class HistoryFilter {
         this.type = builder.type;
     }
 
+    /**
+     * Возвращает новый билдер для создания фильтра.
+     */
     public static class Builder {
         private LocalDateTime from;
         private LocalDateTime to;
@@ -51,11 +67,19 @@ public class HistoryFilter {
             return this;
         }
 
+        /**
+         * Создаёт фильтр.
+         *
+         * @return новый {@link HistoryFilter}
+         */
         public HistoryFilter build() {
             return new HistoryFilter(this);
         }
     }
 
+    /**
+     * Билдер для {@link HistoryFilter}.
+     */
     public static Builder builder() {
         return new Builder();
     }

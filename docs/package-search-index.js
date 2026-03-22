@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.github.zeykrus.bankpet"},{"l":"com.github.zeykrus.bankpet.account"},{"l":"com.github.zeykrus.bankpet.exception"},{"l":"com.github.zeykrus.bankpet.interfaces"},{"l":"com.github.zeykrus.bankpet.model"},{"l":"com.github.zeykrus.bankpet.services"}];updateSearchResults();

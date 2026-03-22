@@ -1,0 +1,6 @@
+com.github.zeykrus.bankpet
+com.github.zeykrus.bankpet.account
+com.github.zeykrus.bankpet.exception
+com.github.zeykrus.bankpet.interfaces
+com.github.zeykrus.bankpet.model
+com.github.zeykrus.bankpet.services

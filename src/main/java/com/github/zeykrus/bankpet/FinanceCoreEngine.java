@@ -9,12 +9,15 @@ import com.github.zeykrus.bankpet.model.ExceptionRecord;
 import com.github.zeykrus.bankpet.model.Transaction;
 import com.github.zeykrus.bankpet.model.TransactionRequest;
 import com.github.zeykrus.bankpet.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class FinanceCoreEngine {
+    private static final Logger log = LoggerFactory.getLogger(FinanceCoreEngine.class);
     private final BankManager bankManager;
     private final ActionHandler actionHandler;
     private final QueueManager queueManager;
@@ -22,11 +25,6 @@ public class FinanceCoreEngine {
     private final ExceptionHandler exceptionHandler;
     private final QueueProcessingService queueProcessingService;
     private final ExceptionProcessingService exceptionProcessingService;
-
-    private final int MAX_RETRIES = 5;
-
-
-
 
     public FinanceCoreEngine() {
         this.bankManager = new BankManager(this);
@@ -36,6 +34,7 @@ public class FinanceCoreEngine {
         this.exceptionHandler = new ExceptionHandler(exceptionQueue,actionHandler);
         this.queueProcessingService = new QueueProcessingService(queueManager, actionHandler);
         this.exceptionProcessingService = new ExceptionProcessingService(exceptionQueue, exceptionHandler);
+        log.info("Оркестратор инициализирован");
     }
 
     public FinanceCoreEngine(BankManager bankManager, ActionHandler actionHandler,
@@ -48,6 +47,7 @@ public class FinanceCoreEngine {
         this.exceptionHandler = exceptionHandler;
         this.queueProcessingService = new QueueProcessingService(queueManager, actionHandler);
         this.exceptionProcessingService = new ExceptionProcessingService(exceptionQueue, exceptionHandler);
+        log.info("Оркестратор инициализирован через расширенный конструктор");
     }
 
     public void newRequest(TransactionRequest req) {
@@ -72,6 +72,7 @@ public class FinanceCoreEngine {
 
 
     public void executeAll() {
+        log.info("Оркестратор выполняет метод executeAll()");
         List<Account> accounts = bankManager.getAllAccounts();
         accounts.stream()
                 .filter(acc -> acc instanceof PeriodicOperation)

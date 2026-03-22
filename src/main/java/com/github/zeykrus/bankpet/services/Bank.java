@@ -7,11 +7,13 @@ import com.github.zeykrus.bankpet.account.InterestBearingAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
 import com.github.zeykrus.bankpet.model.Transaction;
 import com.github.zeykrus.bankpet.model.TransactionRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class Bank {
-
+    private static final Logger log = LoggerFactory.getLogger(Bank.class);
     private final FinanceCoreEngine core;
     private final AccountManager accountManager;
     private static final String BANK_CODE_PREFIX = "B-";
@@ -23,6 +25,7 @@ public class Bank {
         this.accountManager = new AccountManager(this);
         this.number = number;
         this.name = name;
+        log.info("Создание нового банка: {}", this);
     }
 
     public SavingsAccount createSavingAccount(String ownerUser, long initialBalance) {
@@ -61,6 +64,6 @@ public class Bank {
 
     @Override
     public String toString() {
-        return "Bank number: "+BANK_CODE_PREFIX+number;
+        return BANK_CODE_PREFIX+number;
     }
 }

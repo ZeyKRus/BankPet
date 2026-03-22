@@ -6,12 +6,15 @@ import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import com.github.zeykrus.bankpet.model.Transaction;
 import com.github.zeykrus.bankpet.model.TransactionRequest;
 import com.github.zeykrus.bankpet.model.OperationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class Account {
+    private static final Logger log = LoggerFactory.getLogger(Account.class);
     private static final int MAX_TRIES_ON_WITHDRAW = 5;
     protected final Bank bankOwner;
     protected final int number;
@@ -24,6 +27,7 @@ public abstract class Account {
         this.owner = owner;
         this.bankOwner = bankOwner;
         this.balance = new AtomicLong(initialBalance);
+        log.info("Создан новый счет: {}", this);
     }
 
     //######################## Работа с историей операций #############################
@@ -66,11 +70,13 @@ public abstract class Account {
     //######################## Действия со средствами #############################
 
     public void deposit(long amount) {
+        log.debug("Попытка пополнения {} средств на счету {}",amount,this);
         if (amount <= 0) throw new IllegalArgumentException("Сумма пополнения счета должна быть больше нуля");
         balance.addAndGet(amount);
     }
 
     public void withdraw(long amount) throws InsufficientFundsException, WithdrawCASException {
+        log.debug("Попытка снятия {} средств на счету {}",amount,this);
         int trying = 0;
         while(true) {
             long current = balance.get();
@@ -79,9 +85,11 @@ public abstract class Account {
 
             if(balance.compareAndSet(current, current - amount)) break;
             if(trying >= MAX_TRIES_ON_WITHDRAW) {
+                log.warn("Превышен лимит попыток для CAS по снятию средств на счету");
                 throw new WithdrawCASException("Превышен лимит попыток для CAS по снятию средств на счету");
             }
             Thread.onSpinWait();
+            trying++;
         }
     }
 
@@ -118,5 +126,10 @@ public abstract class Account {
     @Override
     public int hashCode() {
         return Objects.hashCode(number);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " " + this.bankOwner.toString() + " " + this.number + " " + this.owner + " " + this.balance;
     }
 }

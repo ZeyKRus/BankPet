@@ -4,6 +4,8 @@ import com.github.zeykrus.bankpet.account.InterestBearingAccount;
 import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.CreditAccount;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AccountManager {
+    private static final Logger log = LoggerFactory.getLogger(AccountManager.class);
     private final Bank bank;
     private final Map<Integer, Account> accounts = new ConcurrentHashMap<>();
     private final AtomicInteger accountNumber = new AtomicInteger(0);
 
     public AccountManager(Bank owner) {
         this.bank = owner;
+        log.info("Сервис инициализирован: {}", this.getClass().getSimpleName());
     }
 
     public SavingsAccount createSavingAccount(String ownerUser, long initialBalance) {

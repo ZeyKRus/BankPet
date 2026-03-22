@@ -8,6 +8,8 @@ import com.github.zeykrus.bankpet.exception.WithdrawCASException;
 import com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
 import com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
 import com.github.zeykrus.bankpet.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ActionHandler {
-
+    private static final Logger log = LoggerFactory.getLogger(ActionHandler.class);
     private final Map<OperationType, ThrowingConsumer<TransactionRequest>> requestHandler = new HashMap<>();
     private final HistoryManager history;
     private final ExceptionQueue exceptionQueue;
@@ -26,9 +28,11 @@ public class ActionHandler {
         requestHandler.put(OperationType.TRANSFER, this::transfer);
         this.history = historyManager;
         this.exceptionQueue = exceptionQueue;
+        log.info("Сервис инициализирован: {}", this.getClass().getSimpleName());
     }
 
     public void transfer(TransactionRequest req) throws InsufficientFundsException, WithdrawCASException {
+        log.debug("Обработка запроса трансфера: {}", req);
         Account accFrom = req.accFrom();
         Account accTo = req.accTo();
         long amount = req.amount();
@@ -43,6 +47,7 @@ public class ActionHandler {
             accFrom.withdraw(amount);
             accTo.deposit(amount);
         } catch (Exception e) {
+            log.debug("Ошибка обработки запроса трансфера: {}", req);
             history.addToHistory(req,false);
             throw e;
         }
@@ -51,6 +56,7 @@ public class ActionHandler {
     }
 
     public void deposit(TransactionRequest req) {
+        log.debug("Обработка запроса пополнения счета: {}", req);
         Account acc = req.accFrom();
         long amount = req.amount();
 
@@ -60,6 +66,7 @@ public class ActionHandler {
 
             acc.deposit(amount);
         } catch (Exception e) {
+            log.debug("Ошибка обработки запроса пополнения счета: {}", req);
             history.addToHistory(req,false);
             throw e;
         }
@@ -68,6 +75,7 @@ public class ActionHandler {
     }
 
     public void withdraw(TransactionRequest req) throws InsufficientFundsException, WithdrawCASException {
+        log.debug("Обработка запроса снятия средств: {}", req);
         Account acc = req.accFrom();
         long amount = req.amount();
 
@@ -77,6 +85,7 @@ public class ActionHandler {
 
             acc.withdraw(amount);
         } catch (Exception e) {
+            log.debug("Ошибка обработки запроса снятия средств: {}", req);
             history.addToHistory(req,false);
             throw e;
         }
@@ -94,17 +103,17 @@ public class ActionHandler {
             if (req == null) throw new IllegalTransactionRequestException("Некорректный запрос на транзакцию");
             requestHandler.get(req.operationType()).accept(req);
         } catch (InsufficientFundsException e) {
-            System.err.println("Бизнес-ошибка при обработке запроса: "+e.getMessage());
+            log.warn("Бизнес-ошибка при обработке запроса: {}", e.getMessage());
             exceptionQueue.add(new ExceptionRecord(req,e));
         } catch (IllegalArgumentException | IllegalStateException |
                  IllegalAccountException e) {
-            System.err.println("Ошибка валидации: "+e.getMessage());
+            log.warn("Ошибка валидации: {}", e.getMessage());
             exceptionQueue.add(new ExceptionRecord(req,e));
         } catch (IllegalTransactionRequestException e) {
-            System.err.println("Ошибка запроса: " + e.getMessage());
+            log.warn("Ошибка запроса: {}", e.getMessage());
             exceptionQueue.add(new ExceptionRecord(req, e));
         } catch (Exception e) {
-            System.err.println("Неизвестная ошибка при выполнения запроса "+req+" Сообщение: "+e.getMessage());
+            log.warn("Неизвестная ошибка при выполнения запроса {} Сообщение: {}", req, e.getMessage());
             exceptionQueue.add(new ExceptionRecord(req,e));
         }
     }

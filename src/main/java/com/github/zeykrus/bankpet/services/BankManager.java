@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BankManager {
     private final FinanceCoreEngine owner;
     private final Map<Integer, Bank> bankList;
-    private final static AtomicInteger counter;
+    private static final AtomicInteger counter;
 
     static {
         counter = new AtomicInteger(0);

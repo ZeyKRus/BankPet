@@ -90,11 +90,12 @@ public class ExceptionProcessingServiceTest {
     @Test
     void shouldNotProcessAnyAfterStopping() throws InterruptedException {
         service.start(1);
-        service.shutdown();
-
         TransactionRequest tr = new TransactionRequest(null, null, null, 0);
         ExceptionRecord exc = new ExceptionRecord(tr,new RuntimeException("Test"));
         CountDownLatch latch = new CountDownLatch(1);
+
+        service.shutdown();
+
         Mockito.doAnswer(s -> {
             latch.countDown();
             return null;
@@ -113,6 +114,7 @@ public class ExceptionProcessingServiceTest {
         AtomicInteger call = new AtomicInteger(0);
 
         CountDownLatch latch = new CountDownLatch(5);
+        CountDownLatch latchFail = new CountDownLatch(atMost);
         Mockito.doAnswer(s -> {
             latch.countDown();
             call.incrementAndGet();
@@ -129,7 +131,7 @@ public class ExceptionProcessingServiceTest {
 
         service.shutdown();
 
-        Thread.sleep(1000);
+        Assertions.assertFalse(latchFail.await(1,TimeUnit.SECONDS));
         Mockito.verify(mockHandler, Mockito.atMost(atMost)).handle(Mockito.any());
     }
 

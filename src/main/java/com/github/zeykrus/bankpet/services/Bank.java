@@ -14,7 +14,7 @@ public class Bank {
 
     private final FinanceCoreEngine core;
     private final AccountManager accountManager;
-    private final static String BANK_CODE_PREFIX = "B-";
+    private static final String BANK_CODE_PREFIX = "B-";
     private final String name;
     private final int number;
 

@@ -11,5 +11,5 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="com.github.zeykrus.bankpet" level="DEBUG"/>
+    <logger name="com.github.zeykrus.bankpet" level="TRACE"/>
 </configuration>

@@ -1,5 +1,6 @@
 package com.github.zeykrus.bankpet.account;
 
+import com.github.zeykrus.bankpet.exception.WithdrawCASException;
 import com.github.zeykrus.bankpet.services.Bank;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
 import com.github.zeykrus.bankpet.model.Transaction;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class Account {
+    private static final int MAX_TRIES_ON_WITHDRAW = 5;
     protected final Bank bankOwner;
     protected final int number;
     protected final String owner;
@@ -68,13 +70,18 @@ public abstract class Account {
         balance.addAndGet(amount);
     }
 
-    public void withdraw(long amount) throws InsufficientFundsException {
+    public void withdraw(long amount) throws InsufficientFundsException, WithdrawCASException {
+        int trying = 0;
         while(true) {
             long current = balance.get();
             if (amount <= 0) throw new IllegalArgumentException("Сумма снятия средств должна быть больше нуля");
             if (!canWithdraw(amount)) throw new InsufficientFundsException("На счете недостаточно средств",notEnough(amount));
 
             if(balance.compareAndSet(current, current - amount)) break;
+            if(trying >= MAX_TRIES_ON_WITHDRAW) {
+                throw new WithdrawCASException("Превышен лимит попыток для CAS по снятию средств на счету");
+            }
+            Thread.onSpinWait();
         }
     }
 

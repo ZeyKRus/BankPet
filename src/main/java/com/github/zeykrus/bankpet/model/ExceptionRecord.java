@@ -36,6 +36,10 @@ public class ExceptionRecord {
 
     @Override
     public String toString() {
-        return "Транзакция: " + req.toString() + " Исключение: " + exception.toString() + " Попытка: " + failings;
+        String reqString;
+        String excString;
+        if (req == null) reqString = "Null"; else reqString = req.toString();
+        if (exception == null) excString = "Null"; else excString = exception.toString();
+        return "Транзакция: " + reqString + " Исключение: " + excString + " Попытка: " + failings;
     }
 }

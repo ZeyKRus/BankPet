@@ -93,14 +93,12 @@ public class ExceptionProcessingServiceTest {
         TransactionRequest tr = new TransactionRequest(null, null, null, 0);
         ExceptionRecord exc = new ExceptionRecord(tr,new RuntimeException("Test"));
         CountDownLatch latch = new CountDownLatch(1);
-
-        service.shutdown();
-
         Mockito.doAnswer(s -> {
             latch.countDown();
             return null;
         }).when(mockHandler).handle(Mockito.any());
-
+        Thread.sleep(5); //Чтобы поток успел инициализироваться.
+        service.shutdown();
         exceptionQueue.add(exc);
 
         latch.await(1, TimeUnit.SECONDS);

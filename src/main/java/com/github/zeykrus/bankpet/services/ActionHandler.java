@@ -4,6 +4,7 @@ import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.exception.IllegalAccountException;
 import com.github.zeykrus.bankpet.exception.IllegalTransactionRequestException;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.exception.WithdrawCASException;
 import com.github.zeykrus.bankpet.interfaces.PeriodicOperation;
 import com.github.zeykrus.bankpet.interfaces.ThrowingConsumer;
 import com.github.zeykrus.bankpet.model.*;
@@ -27,7 +28,7 @@ public class ActionHandler {
         this.exceptionQueue = exceptionQueue;
     }
 
-    public void transfer(TransactionRequest req) throws InsufficientFundsException {
+    public void transfer(TransactionRequest req) throws InsufficientFundsException, WithdrawCASException {
         Account accFrom = req.accFrom();
         Account accTo = req.accTo();
         long amount = req.amount();
@@ -66,7 +67,7 @@ public class ActionHandler {
         history.addToHistory(req,true);
     }
 
-    public void withdraw(TransactionRequest req) throws InsufficientFundsException {
+    public void withdraw(TransactionRequest req) throws InsufficientFundsException, WithdrawCASException {
         Account acc = req.accFrom();
         long amount = req.amount();
 

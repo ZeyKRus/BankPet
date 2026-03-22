@@ -5,6 +5,7 @@ import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.account.Account;
 import com.github.zeykrus.bankpet.account.SavingsAccount;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.exception.WithdrawCASException;
 import com.github.zeykrus.bankpet.model.HistoryFilter;
 import com.github.zeykrus.bankpet.model.OperationType;
 import com.github.zeykrus.bankpet.model.TransactionRequest;
@@ -71,6 +72,8 @@ public class ActionHandlerTest {
             actionHandler.withdraw(req);
         } catch (InsufficientFundsException e) {
             throw new RuntimeException(e); //Никогда не случится, объявлено, чтобы избежать аннотации throws
+        } catch (WithdrawCASException e) {
+            throw new RuntimeException(e);
         }
 
         Assertions.assertEquals(exceptedAmount, accFrom.getBalance(),"Не соответствует ожидаемому балансу");
@@ -123,6 +126,8 @@ public class ActionHandlerTest {
             actionHandler.transfer(req);
         } catch (InsufficientFundsException e) {
             throw new RuntimeException(e); //Никогда не случится, объявлено, чтобы избежать аннотации throws
+        } catch (WithdrawCASException e) {
+            throw new RuntimeException(e);
         }
 
         Assertions.assertAll(

@@ -3,6 +3,7 @@ package com.github.zeykrus.bankpet.account;
 import com.github.zeykrus.bankpet.FinanceCoreEngine;
 import com.github.zeykrus.bankpet.TestConstants;
 import com.github.zeykrus.bankpet.exception.InsufficientFundsException;
+import com.github.zeykrus.bankpet.exception.WithdrawCASException;
 import com.github.zeykrus.bankpet.services.Bank;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +52,8 @@ public abstract class  AccountTest<T extends Account> {
         try {
             account.withdraw(amount);
         } catch (InsufficientFundsException e) {
+            throw new RuntimeException(e);
+        } catch (WithdrawCASException e) {
             throw new RuntimeException(e);
         }
 
